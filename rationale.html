@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HMI Design Rationale</title>
+<meta name="description" content="Why each change was made in the NorSmart 3 Stage V display redesign concept.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600&display=swap" rel="stylesheet">
+<style>
+:root { --bg:#F6F7F8; --card:#FFFFFF; --txt:#111418; --mut:#505A65; --line:#DCE1E6; --acc:#0B5CC4; --amber:#B86E00; --red:#B3261E; --chip:#EEF1F4; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#0E1114; --card:#161A1F; --txt:#E8EAED; --mut:#A3ACB7; --line:#262C34; --acc:#7DB8FF; --amber:#F2A93B; --red:#FF6A5E; --chip:#1F242A; } }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--txt); font: 17px/1.55 'Barlow', system-ui, sans-serif; }
+.wrap { max-width: 1040px; margin: 0 auto; padding: 32px 20px 64px; }
+a { color: var(--acc); }
+header .back { display: inline-flex; align-items: center; height: 40px; padding: 0 14px; border: 1px solid var(--line); border-radius: 8px; text-decoration: none; color: var(--txt); font-weight: 500; margin-bottom: 24px; }
+h1 { font-size: 40px; line-height: 1.1; margin: 0 0 10px; font-weight: 700; letter-spacing: -.01em; }
+h2 { font-size: 26px; margin: 48px 0 14px; font-weight: 700; }
+h3 { font-size: 19px; margin: 0 0 6px; font-weight: 600; }
+p { margin: 0 0 12px; }
+.lede { font-size: 20px; color: var(--mut); max-width: 760px; }
+.meta { display: flex; gap: 10px; flex-wrap: wrap; margin: 18px 0 0; }
+.meta span { background: var(--chip); border-radius: 6px; padding: 4px 10px; font-size: 14px; color: var(--mut); }
+.grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 900px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .grid { grid-template-columns: 1fr; } }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px 20px; }
+.card p { color: var(--mut); font-size: 16px; margin: 0; }
+.num { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 34px; line-height: 1; color: var(--acc); }
+.tbl { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; font-size: 16px; }
+.tbl th, .tbl td { text-align: left; vertical-align: top; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+.tbl th { font-size: 13px; text-transform: uppercase; letter-spacing: .07em; color: var(--mut); background: var(--chip); }
+.tbl td:first-child { font-weight: 600; width: 22%; }
+.tbl td.ref { color: var(--mut); white-space: nowrap; font-size: 14px; }
+.tbl tr:last-child td { border-bottom: 0; }
+.scroll { overflow-x: auto; border-radius: 14px; }
+ul.clean { padding-left: 20px; margin: 0; }
+ul.clean li { margin-bottom: 8px; }
+.flag { border-left: 0; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px 20px; }
+.flag b { color: var(--amber); }
+footer { margin-top: 56px; color: var(--mut); font-size: 14px; border-top: 1px solid var(--line); padding-top: 18px; }
+@media (max-width: 640px) { h1 { font-size: 30px; } .tbl td.ref { white-space: normal; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="back" href="index.html">← Open the prototype</a>
+    <h1>NorSmart 3 Stage V display: redesign rationale</h1>
+    <p class="lede">The current display packs a lot of machine knowledge into icons, numbered windows and colour codes. This concept keeps every function in the v1.15 manual but makes the screen explain itself.</p>
+    <div class="meta"><span>Source: Control System User Interface Manual v1.15, 25.05.2023</span><span>Concept, October 2026</span><span>Simulated data</span></div>
+  </header>
+
+  <h2>The short version</h2>
+  <div class="grid">
+    <div class="card"><div class="num">3.1.1 → Alerts</div><h3>Names, not window numbers</h3><p>Drive, Exhaust, Alerts, Machine, Diagnostics, Service. No window numbers like 3.1.1.2.1.</p></div>
+    <div class="card"><div class="num">~25 → 4</div><h3>Indicator icons on Drive</h3><p>Only lamps that are lit appear, each with a text label. The full list is one tap away.</p></div>
+    <div class="card"><div class="num">3 taps → 0</div><h3>DPF regeneration</h3><p>Soot level and a Regenerate button sit on the Drive screen. The original was under Diagnostics, window 6.8.</p></div>
+    <div class="card"><div class="num">Code → words</div><h3>Alarms explain themselves</h3><p>Each alert says what is happening, the effect on the machine and what to do. The code is still there.</p></div>
+  </div>
+
+  <h2>What changed and why</h2>
+  <div class="scroll"><table class="tbl">
+    <thead><tr><th>Area</th><th>Today</th><th>In the concept</th><th>Manual</th></tr></thead>
+    <tbody>
+      <tr><td>Gauges</td><td>Icon-only bars. Some are hidden and need left and right arrows to page through.</td><td>All nine visible at once, with a label, number, unit and a tick at the warning limit. Grey when normal, amber or red only when not.</td><td class="ref">p. 22–23</td></tr>
+      <tr><td>Indicator lamps</td><td>A fixed row of about 25 small symbols. The meaning is in an appendix.</td><td>An “Active now” strip shows only lit lamps, in words, worst first. Tapping one opens the screen that deals with it.</td><td class="ref">p. 24–33, App. 9</td></tr>
+      <tr><td>Speed and engine</td><td>Round speedometer with a decorative logo in the middle and a separate RPM arc.</td><td>Large digital speed, F/N/R and gear in one block, and a straight RPM bar with the warning and red zones marked.</td><td class="ref">p. 20–21</td></tr>
+      <tr><td>Alerts</td><td>A small red spot in the corner. The log shows numbered alarm texts such as “4131”.</td><td>Alarm and warning counts are always in the top left. Alerts are sorted by severity, with plain-language cause, effect, steps, a live trend where useful, and acknowledge.</td><td class="ref">p. 18, 44–48, App. 1</td></tr>
+      <tr><td>Critical alarms</td><td>Pop-up window with the alarm text.</td><td>Pop-up gives the one thing to do first, then links to the full steps. Several alarms queue instead of stacking.</td><td class="ref">p. 18</td></tr>
+      <tr><td>DPF regeneration</td><td>A blinking lamp on Drive. The button, soot and ash values are in Diagnostics, window 6.8. The level table differs for Deutz and Volvo Penta.</td><td>A dedicated Exhaust screen shows soot against levels 3 to 6 with what each means. A guided checklist confirms the machine is parked, in neutral and warm, the inhibit switch is on Permit, and the exhaust area is clear. Only then does Start unlock. The run stops itself if the brake is released.</td><td class="ref">p. 30–32, 127–129</td></tr>
+      <tr><td>Hot exhaust safety</td><td>Distances to keep clear are written in the manual.</td><td>The same 0.6 m and 1.5 m rules are an on-screen confirmation before regeneration. A “Hot exhaust” flag shows while it is hot.</td><td class="ref">p. 32</td></tr>
+      <tr><td>Support legs</td><td>Limit switch and valve symbols for each leg in a pop-up.</td><td>Top view of the machine with each leg's state in words. Tap a leg for its switches and valves. A “Ready to scale?” checklist and the resulting boom limits.</td><td class="ref">p. 35–40</td></tr>
+      <tr><td>Navigation</td><td>Six numbered main windows, sub-view and sub-list icons, brown paging arrows.</td><td>A labelled side rail, always visible. Service functions sit in one searchable hub grouped by task.</td><td class="ref">p. 9–13</td></tr>
+      <tr><td>Changing values</td><td>Up and down buttons. Tap outside the field to accept. A red Save button if anything is unsaved.</td><td>Keypad entry with range check, an old-to-new review step, then Save. Every change is logged with the access level and can be undone.</td><td class="ref">p. 14–15</td></tr>
+      <tr><td>Access levels</td><td>A pop-up saying the level is too low.</td><td>The current level is always in the top bar. Locked items show a lock. Tapping one asks for the code and then carries on with what you were doing. Auto logout after 15 minutes.</td><td class="ref">p. 16</td></tr>
+      <tr><td>USB, backup, update</td><td>The rule to press the emergency stop first is a warning in the manual.</td><td>The USB flow checks the emergency stop is pressed before anything can start. The 30 second cancel window for updates is a visible countdown.</td><td class="ref">p. 6, 141–143</td></tr>
+      <tr><td>Brake test</td><td>A dense window of switch codes and values.</td><td>A checklist of start conditions, a 5 second guided run, and a clear pass or fail with the measured pressures and distance.</td><td class="ref">p. 134–140</td></tr>
+      <tr><td>Lighting</td><td>Dark brown and gold theme. Brightness setting.</td><td>Night mode for underground, Day mode for bright light, and brightness. Both keep the same contrast rules.</td><td class="ref">p. 54</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Design rules used</h2>
+  <ul class="clean">
+    <li><b>Grey is normal.</b> Colour is kept for things that need attention, so a red or amber item stands out at a glance. This follows high-performance HMI practice such as ISA-101.</li>
+    <li><b>Words beat symbols.</b> Every lamp, button and state has a text label. Symbols support the text and never replace it.</li>
+    <li><b>Severity is shown three ways.</b> Colour, shape and word: a red square for an alarm, an amber circle for a warning, a grey box for info. It still works for colour-blind operators.</li>
+    <li><b>Gloves and vibration.</b> Touch targets are at least 44 px and mostly 56 px or more. Numbers use a condensed typeface with fixed-width digits so they do not jump.</li>
+    <li><b>Interlocks are explained.</b> When the machine refuses something, the screen says why and what to change, such as “Drive blocked: support legs are down”.</li>
+  </ul>
+
+  <h2>Assumptions and open questions</h2>
+  <div class="flag">
+    <ul class="clean">
+      <li><b>Display size.</b> Designed for a 10.1 inch 1280 × 800 touch panel. The current MID is smaller, so the layout would need a check on the real hardware.</li>
+      <li><b>Engine maker.</b> Soot levels follow the Volvo Penta thresholds in the manual. Deutz machines use different ones.</li>
+      <li><b>Values.</b> Every number in the prototype is simulated. Limits, ranges, versions and service intervals are examples and must not be used as parameters.</li>
+      <li><b>Alarm guidance.</b> The “What to do” steps were written for this concept. They need checking against the machine's operator and service manuals.</li>
+      <li><b>Process display.</b> The manual says it is not in use on this platform, so it is not included.</li>
+    </ul>
+  </div>
+
+  <h2>How to review</h2>
+  <ol class="clean">
+    <li>Open the <a href="index.html">prototype</a> on a laptop or tablet. On a phone the panel moves below the screen.</li>
+    <li>Use the scenario buttons on the right to put the machine into different states.</li>
+    <li>Tap through the display as an operator would. Every button works.</li>
+    <li>Write notes in the panel, then copy them, or <a href="https://github.com/ardakucuk87/norsmart-hmi-redesign/issues/new">open an issue</a> if you have a GitHub account.</li>
+  </ol>
+
+  <footer>Independent design concept prepared for review. Not affiliated with or endorsed by Normet. Product names belong to their owners.</footer>
+</div>
+</body>
+</html>
