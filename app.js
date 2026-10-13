@@ -490,7 +490,7 @@ function scrDrive() {
   const dpfWarn = band !== 'L3';
   const blockMsg = { legs: tx('Drive blocked · legs down'), park: tx('Parking brake on'), estop: tx('Emergency stop'), regen: tx('Regenerating') }[m.block];
   const inds = activeInds();
-  const shown = inds.slice(0, 4);
+  const shown = inds.slice(0, S.lang === 'tr' ? 3 : 4);
   const more = inds.length - shown.length;
   const gaugeRows = GAUGES.map((g) => {
     const st = gState(g);
