@@ -275,7 +275,7 @@ a { color: var(--accent); }
   position: absolute; width: 128px; height: 80px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
   border: 3px solid var(--line3); background: var(--line3); color: var(--txt);
 }
-.legbtn.up { background: var(--amberSoft); color: var(--amberTxt); border-color: var(--amber); }
+.legbtn.up { background: linear-gradient(var(--amberSoft), var(--amberSoft)), var(--panel); color: var(--amberTxt); border-color: var(--amber); }
 .legbtn.moving { border-style: dashed; }
 .legbtn.sel { outline: 4px solid var(--accent); outline-offset: 3px; }
 .legbtn small { font-size: 15px; font-weight: 600; opacity: .85; }
@@ -384,3 +384,11 @@ a { color: var(--accent); }
 .blink { animation: blink 1s steps(2, start) infinite; }
 @keyframes blink { to { visibility: hidden; } }
 @media (prefers-reduced-motion: reduce) { .chip.new, .blink, .cam-view .noise { animation: none; } }
+
+/* EN / TR language switch in the top bar */
+.tbtn.langsw { gap: 2px; padding: 0 4px; }
+.tbtn.langsw span { padding: 6px 10px; border-radius: 16px; font-size: 15px; font-weight: 700; color: var(--mut); letter-spacing: .03em; }
+.tbtn.langsw span.on { background: var(--invBg); color: var(--invTxt); }
+.rail button span { text-align: center; line-height: 1.15; padding: 0 2px; }
+.indrow { flex: 1; min-width: 0; display: flex; gap: 10px; overflow: hidden; }
+.indrow .ind { flex: 0 1 auto; min-width: 72px; overflow: hidden; text-overflow: ellipsis; display: block; line-height: 46px; }

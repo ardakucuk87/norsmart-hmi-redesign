@@ -4,20 +4,20 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>NorSmart HMI Concept</title>
-<meta name="description" content="Interactive redesign concept for the NorSmart 3 Stage V machine display. Simulated data.">
+<meta name="description" content="Interactive redesign concept for the NorSmart 3 Stage V machine display, in English and Turkish. Simulated data.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css?v=3">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%23121417'/%3E%3Cpath d='M5 17a7 7 0 1 1 14 0' fill='none' stroke='%237DB8FF' stroke-width='2.2' stroke-linecap='round'/%3E%3Cpath d='M12 15l3.5-3.5' stroke='%23E8EAED' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E">
 </head>
 <body>
 <header class="site-head">
-  <h1>NorSmart 3 Stage V · display redesign concept</h1>
-  <span class="sub">Interactive prototype · simulated machine data</span>
+  <h1 data-i18n="NorSmart 3 Stage V · display redesign concept">NorSmart 3 Stage V · display redesign concept</h1>
+  <span class="sub" data-i18n="Interactive prototype · simulated machine data">Interactive prototype · simulated machine data</span>
   <nav aria-label="Site">
-    <a href="rationale.html">Design rationale</a>
-    <a id="feedbackLink" href="https://github.com/ardakucuk87/norsmart-hmi-redesign/issues/new" target="_blank" rel="noopener">Leave feedback</a>
+    <a id="rationaleLink" href="rationale.html" data-i18n="Design rationale">Design rationale</a>
+    <a id="feedbackLink" href="https://github.com/ardakucuk87/norsmart-hmi-redesign/issues/new" target="_blank" rel="noopener" data-i18n="Leave feedback">Leave feedback</a>
   </nav>
 </header>
 
@@ -28,68 +28,70 @@
         <div class="screen" id="screen" role="application" aria-label="Machine display, 1280 by 800"></div>
       </div>
     </div>
-    <p class="stage-note">10.1 inch 1280 × 800 touch display, scaled to fit. Tap the screen like an operator. Use the panel to drive the machine.</p>
+    <p class="stage-note" data-i18n="10.1 inch 1280 × 800 touch display, scaled to fit. Tap the screen like an operator. Use the panel to drive the machine.">10.1 inch 1280 × 800 touch display, scaled to fit. Tap the screen like an operator. Use the panel to drive the machine.</p>
   </div>
 
   <aside class="panel" aria-label="Reviewer controls">
     <div class="grp">
-      <h2>Try a scenario</h2>
+      <h2 data-i18n="Try a scenario">Try a scenario</h2>
       <div class="scen" id="scenarios"></div>
     </div>
 
     <div class="grp">
-      <h2>Machine controls</h2>
-      <div class="row"><span class="lbl">Engine</span><button class="pbtn" data-p="engine" id="pEngine"></button></div>
-      <div class="row"><span class="lbl">Direction</span><div class="seg" id="pDir"><button data-p="dir" data-v="R">R</button><button data-p="dir" data-v="N">N</button><button data-p="dir" data-v="F">F</button></div></div>
-      <div class="row"><span class="lbl">Throttle</span><input type="range" id="pThrottle" min="0" max="100" value="35" aria-label="Throttle"><span id="pThrottleV" style="width:40px;text-align:right;font-size:14px">35%</span></div>
-      <div class="row"><span class="lbl">Parking brake</span><button class="pbtn" data-p="park" id="pPark"></button></div>
-      <div class="row"><span class="lbl">Brake pedal</span><button class="pbtn" data-p="pedal" id="pPedal"></button></div>
-      <div class="row"><span class="lbl">Emergency stop</span><button class="pbtn estop danger" data-p="estop" id="pEstop"></button></div>
-      <div class="row"><span class="lbl">Support legs</span>
-        <button class="pbtn" data-p="legs" data-v="down">Lower all</button>
-        <button class="pbtn" data-p="legs" data-v="up">Raise all</button>
+      <h2 data-i18n="Machine controls">Machine controls</h2>
+      <div class="row"><span class="lbl" data-i18n="Engine">Engine</span><button class="pbtn" data-p="engine" id="pEngine"></button></div>
+      <div class="row"><span class="lbl" data-i18n="Direction">Direction</span><div class="seg" id="pDir"><button data-p="dir" data-v="R">R</button><button data-p="dir" data-v="N">N</button><button data-p="dir" data-v="F">F</button></div></div>
+      <div class="row"><span class="lbl" data-i18n="Throttle">Throttle</span><input type="range" id="pThrottle" min="0" max="100" value="35" aria-label="Throttle" data-i18n-aria="Throttle"><span id="pThrottleV" style="width:44px;text-align:right;font-size:14px">35%</span></div>
+      <div class="row"><span class="lbl" data-i18n="Parking brake">Parking brake</span><button class="pbtn" data-p="park" id="pPark"></button></div>
+      <div class="row"><span class="lbl" data-i18n="Brake pedal">Brake pedal</span><button class="pbtn" data-p="pedal" id="pPedal"></button></div>
+      <div class="row"><span class="lbl" data-i18n="Emergency stop">Emergency stop</span><button class="pbtn estop danger" data-p="estop" id="pEstop"></button></div>
+      <div class="row"><span class="lbl" data-i18n="Support legs">Support legs</span>
+        <button class="pbtn" data-p="legs" data-v="down" data-i18n="Lower all">Lower all</button>
+        <button class="pbtn" data-p="legs" data-v="up" data-i18n="Raise all">Raise all</button>
       </div>
       <div class="row"><span class="lbl"></span>
-        <button class="pbtn" data-p="leg" data-v="0" id="pLeg0">LF</button>
-        <button class="pbtn" data-p="leg" data-v="1" id="pLeg1">RF</button>
-        <button class="pbtn" data-p="leg" data-v="2" id="pLeg2">LR</button>
-        <button class="pbtn" data-p="leg" data-v="3" id="pLeg3">RR</button>
+        <button class="pbtn" data-p="leg" data-v="0" id="pLeg0" data-i18n="LF">LF</button>
+        <button class="pbtn" data-p="leg" data-v="1" id="pLeg1" data-i18n="RF">RF</button>
+        <button class="pbtn" data-p="leg" data-v="2" id="pLeg2" data-i18n="LR">LR</button>
+        <button class="pbtn" data-p="leg" data-v="3" id="pLeg3" data-i18n="RR">RR</button>
       </div>
-      <div class="row"><span class="lbl">Cab keys</span>
-        <button class="pbtn" data-p="test">Brake TEST key</button>
-        <button class="pbtn" data-p="camera">Camera key</button>
-        <button class="pbtn" data-p="reboot">Power cycle</button>
+      <div class="row"><span class="lbl" data-i18n="Cab keys">Cab keys</span>
+        <button class="pbtn" data-p="test" data-i18n="Brake TEST key">Brake TEST key</button>
+        <button class="pbtn" data-p="camera" data-i18n="Camera key">Camera key</button>
+        <button class="pbtn" data-p="reboot" data-i18n="Power cycle">Power cycle</button>
       </div>
     </div>
 
     <div class="grp">
-      <h2>Access codes for the demo</h2>
-      <div class="codes">Site supervisor 1111<br>Maintenance 2222<br>Factory 3333</div>
+      <h2 data-i18n="Access codes for the demo">Access codes for the demo</h2>
+      <div class="codes"><span data-i18n="Site supervisor">Site supervisor</span> 1111<br><span data-i18n="Maintenance">Maintenance</span> 2222<br><span data-i18n="Factory">Factory</span> 3333</div>
     </div>
 
     <div class="grp">
-      <h2>Things to try</h2>
+      <h2 data-i18n="Things to try">Things to try</h2>
       <ul class="try">
-        <li>Pick “Ready to regenerate”, then run the regeneration on the Exhaust screen.</li>
-        <li>Pick “Hydraulic overheat” and watch the alarm pop up and the gauge turn red.</li>
-        <li>Lower the legs and try to drive. See how the display explains the block.</li>
-        <li>Service: log in as Maintenance and change a parameter. Then undo it.</li>
-        <li>Press the Brake TEST key and run the brake test.</li>
-        <li>Switch to Day mode with the sun button at the top right.</li>
+        <li data-i18n="Switch the language with the EN / TR button at the top of the display.">Switch the language with the EN / TR button at the top of the display.</li>
+        <li data-i18n="Pick “Ready to regenerate”, then run the regeneration on the Exhaust screen.">Pick “Ready to regenerate”, then run the regeneration on the Exhaust screen.</li>
+        <li data-i18n="Pick “Hydraulic overheat” and watch the alarm pop up and the gauge turn red.">Pick “Hydraulic overheat” and watch the alarm pop up and the gauge turn red.</li>
+        <li data-i18n="Lower the legs and try to drive. See how the display explains the block.">Lower the legs and try to drive. See how the display explains the block.</li>
+        <li data-i18n="Service: log in as Maintenance and change a parameter. Then undo it.">Service: log in as Maintenance and change a parameter. Then undo it.</li>
+        <li data-i18n="Press the Brake TEST key and run the brake test.">Press the Brake TEST key and run the brake test.</li>
+        <li data-i18n="Switch to Day mode with the sun button at the top right.">Switch to Day mode with the sun button at the top right.</li>
       </ul>
     </div>
 
     <div class="grp">
-      <h2>Your notes</h2>
-      <label class="sr" for="notes">Review notes</label>
-      <textarea id="notes" placeholder="Type review notes here. They stay in this browser."></textarea>
-      <div class="row"><button class="pbtn" id="copyNotes">Copy notes</button><span id="copyMsg" class="hint"></span></div>
+      <h2 data-i18n="Your notes">Your notes</h2>
+      <label class="sr" for="notes" data-i18n="Review notes">Review notes</label>
+      <textarea id="notes" placeholder="Type review notes here. They stay in this browser." data-i18n-ph="Type review notes here. They stay in this browser."></textarea>
+      <div class="row"><button class="pbtn" id="copyNotes" data-i18n="Copy notes">Copy notes</button><span id="copyMsg" class="hint"></span></div>
     </div>
   </aside>
 </div>
 
-<p class="foot">Independent design concept for review. Not affiliated with or endorsed by Normet. All values are simulated and must not be used as machine parameters.</p>
+<p class="foot" data-i18n="Independent design concept for review. Not affiliated with or endorsed by Normet. All values are simulated and must not be used as machine parameters.">Independent design concept for review. Not affiliated with or endorsed by Normet. All values are simulated and must not be used as machine parameters.</p>
 
-<script src="app.js"></script>
+<script src="i18n.js?v=3"></script>
+<script src="app.js?v=3"></script>
 </body>
 </html>
