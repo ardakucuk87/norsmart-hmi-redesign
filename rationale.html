@@ -63,8 +63,8 @@ html[lang="en"] [data-lang="en"], html[lang="tr"] [data-lang="tr"] { display: bl
   <!-- ===================== ENGLISH ===================== -->
   <div data-lang="en" lang="en">
     <h1>NorSmart 3 Stage V display: redesign rationale</h1>
-    <p class="lede">The current display packs a lot of machine knowledge into icons, numbered windows and colour codes. This concept keeps every function in the v1.15 manual but makes the screen explain itself, in English or Turkish.</p>
-    <div class="meta"><span>Source: Control System User Interface Manual v1.15, 25.05.2023</span><span>Concept, October 2026</span><span>Simulated data</span></div>
+    <p class="lede">The current display packs a lot of machine knowledge into icons, numbered windows and colour codes. This concept keeps every function in the v1.15 manual, runs on the machine's real CAN database (BYM6), and makes the screen explain itself in English or Turkish.</p>
+    <div class="meta"><span>Source: Control System User Interface Manual v1.15, 25.05.2023</span><span>CAN: BYM6.dbc</span><span>Concept, October 2026</span><span>Simulated data</span></div>
 
     <h2>The short version</h2>
     <div class="grid">
@@ -85,8 +85,7 @@ html[lang="en"] [data-lang="en"], html[lang="tr"] [data-lang="tr"] { display: bl
         <tr><td>Critical alarms</td><td>Pop-up window with the alarm text.</td><td>Pop-up gives the one thing to do first, then links to the full steps. Several alarms queue instead of stacking.</td><td class="ref">p. 18</td></tr>
         <tr><td>DPF regeneration</td><td>A blinking lamp on Drive. The button, soot and ash values are in Diagnostics, window 6.8. The level table differs for Deutz and Volvo Penta.</td><td>A dedicated Exhaust screen shows soot against levels 3 to 6 with what each means. A guided checklist confirms the machine is parked, in neutral and warm, the inhibit switch is on Permit, and the exhaust area is clear. Only then does Start unlock. The run stops itself if the brake is released.</td><td class="ref">p. 30–32, 127–129</td></tr>
         <tr><td>Hot exhaust safety</td><td>Distances to keep clear are written in the manual.</td><td>The same 0.6 m and 1.5 m rules are an on-screen confirmation before regeneration. A “Hot exhaust” flag shows while it is hot.</td><td class="ref">p. 32</td></tr>
-        <tr><td>Support legs</td><td>Limit switch and valve symbols for each leg in a pop-up.</td><td>Top view of the machine with each leg's state in words. Tap a leg for its switches and valves. A “Ready to scale?” checklist and the resulting boom limits.</td><td class="ref">p. 35–40</td></tr>
-        <tr><td>Navigation</td><td>Six numbered main windows, sub-view and sub-list icons, brown paging arrows.</td><td>A labelled side rail, always visible. Service functions sit in one searchable hub grouped by task.</td><td class="ref">p. 9–13</td></tr>
+                <tr><td>Navigation</td><td>Six numbered main windows, sub-view and sub-list icons, brown paging arrows.</td><td>A labelled side rail, always visible. Service functions sit in one searchable hub grouped by task.</td><td class="ref">p. 9–13</td></tr>
         <tr><td>Changing values</td><td>Up and down buttons. Tap outside the field to accept. A red Save button if anything is unsaved.</td><td>Keypad entry with range check, an old-to-new review step, then Save. Every change is logged with the access level and can be undone.</td><td class="ref">p. 14–15</td></tr>
         <tr><td>Access levels</td><td>A pop-up saying the level is too low.</td><td>The current level is always in the top bar. Locked items show a lock. Tapping one asks for the code and then carries on with what you were doing. Auto logout after 15 minutes.</td><td class="ref">p. 16</td></tr>
         <tr><td>USB, backup, update</td><td>The rule to press the emergency stop first is a warning in the manual.</td><td>The USB flow checks the emergency stop is pressed before anything can start. The 30 second cancel window for updates is a visible countdown.</td><td class="ref">p. 6, 141–143</td></tr>
@@ -96,13 +95,36 @@ html[lang="en"] [data-lang="en"], html[lang="tr"] [data-lang="tr"] { display: bl
       </tbody>
     </table></div>
 
+    <h2>Built on the real CAN database (BYM6)</h2>
+    <p>The prototype now runs on the machine's CAN database, BYM6.dbc: 16 messages and 124 signals. The simulator packs its values into real 8-byte frames using the DBC bit layout, and every screen shows only what it decodes from those frames. The same screens could be fed by a CAN gateway later.</p>
+    <div class="scroll"><table class="tbl">
+      <thead><tr><th>Area</th><th>What the bus gives</th><th>How the UI shows it</th></tr></thead>
+      <tbody>
+        <tr><td>Mixer drum</td><td>Turning left or right, lock, control at cab or rear, four lever positions, coil currents</td><td>A Mixer screen replaces support legs: animated drum, which station is in control, live lever bars and a “Ready to discharge?” checklist.</td></tr>
+        <tr><td>Brakes</td><td>Front, rear and parking circuits: accumulator pressure, applied pressure, accumulator fault, sensor faults</td><td>A three-circuit panel on Drive. A failed sensor shows “Sensor fault”, never a misleading 0 bar.</td></tr>
+        <tr><td>Drivetrain</td><td>F/N/R, gears 1–3 each way, lock-up, retarder, neutral-needed warning, clutch coil currents</td><td>F2 / R1 gear display with lock-up and retarder badges. A Valves page compares commanded and measured coil current to find open circuits.</td></tr>
+        <tr><td>Engine</td><td>Speed, hours, temperatures, pressures, preheat, cranking, start delay, up to 5 J1939 fault codes</td><td>Start-up guidance (“Preheating · wait”, “Shift to neutral to start”), and fault codes shown as plain text from the SPN and FMI.</td></tr>
+        <tr><td>Rear station</td><td>Rear ECU (MRS) status and the signals to and from it</td><td>Online or offline on the Mixer screen, with a warning when it drops out.</td></tr>
+        <tr><td>Cab</td><td>Doors, seat belt, steering lock, lights, signals, horn, heated window, air conditioning</td><td>Turn-signal arrows on Drive, and warnings for an open door or no seat belt while moving.</td></tr>
+        <tr><td>Data loss</td><td>Message timing</td><td>If ECU frames stop for more than 1 second, values turn to –– with a “No data from ECU” banner. Diagnostics › CAN bus shows every frame live.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="flag" style="margin-top:14px"><b>Open questions in BYM6.dbc</b>
+      <ul class="clean" style="margin-top:8px">
+        <li>No soot, DEF or SCR signals. The Exhaust screen needs the engine's own J1939 messages, or should be removed if the engine has no aftertreatment.</li>
+        <li>Almost no units. Pressures are assumed bar or kPa, and temperatures °C. The CAN bus page marks each assumption.</li>
+        <li>Fuel level and gas pedal are raw 0–255. Battery voltage at 0.5 V per bit is coarse. Hydraulic and transmission oil temperatures cannot go below 0 °C.</li>
+        <li>Lever positions are raw 0–65535 and need calibration limits. MIXER_RIGHT_COIL_CURRENT_MA_2 is probably the left coil.</li>
+        <li>No message cycle times, so the 1 second timeout is an assumption. No emergency stop, operator presence or insulation signals.</li>
+      </ul></div>
+
     <h2>Design rules used</h2>
     <ul class="clean">
       <li><b>Grey is normal.</b> Colour is kept for things that need attention, so a red or amber item stands out at a glance. This follows high-performance HMI practice such as ISA-101.</li>
       <li><b>Words beat symbols.</b> Every lamp, button and state has a text label. Symbols support the text and never replace it.</li>
       <li><b>Severity is shown three ways.</b> Colour, shape and word: a red square for an alarm, an amber circle for a warning, a grey box for info. It still works for colour-blind operators.</li>
       <li><b>Gloves and vibration.</b> Touch targets are at least 44 px and mostly 56 px or more. Numbers use a condensed typeface with fixed-width digits so they do not jump.</li>
-      <li><b>Interlocks are explained.</b> When the machine refuses something, the screen says why and what to change, such as “Drive blocked: support legs are down”.</li>
+      <li><b>Interlocks are explained.</b> When the machine refuses something, the screen says why and what to change, such as “Shift to neutral to start” or “Sensor fault” instead of a false reading.</li>
     </ul>
 
     <h2>Assumptions and open questions</h2>
@@ -129,8 +151,8 @@ html[lang="en"] [data-lang="en"], html[lang="tr"] [data-lang="tr"] { display: bl
   <!-- ===================== TÜRKÇE ===================== -->
   <div data-lang="tr" lang="tr">
     <h1>NorSmart 3 Stage V ekranı: yeniden tasarım gerekçesi</h1>
-    <p class="lede">Mevcut ekran, makineyle ilgili pek çok bilgiyi simgelere, numaralı pencerelere ve renk kodlarına sıkıştırıyor. Bu konsept, v1.15 kılavuzundaki tüm işlevleri korur, ancak ekranın kendini İngilizce veya Türkçe olarak açıklamasını sağlar.</p>
-    <div class="meta"><span>Kaynak: Kontrol Sistemi Kullanıcı Arayüzü Kılavuzu v1.15, 25.05.2023</span><span>Konsept, Ekim 2026</span><span>Simüle edilmiş veriler</span></div>
+    <p class="lede">Mevcut ekran, makineyle ilgili pek çok bilgiyi simgelere, numaralı pencerelere ve renk kodlarına sıkıştırıyor. Bu konsept, v1.15 kılavuzundaki tüm işlevleri korur, makinenin gerçek CAN veritabanı (BYM6) ile çalışır ve ekranın kendini İngilizce veya Türkçe olarak açıklamasını sağlar.</p>
+    <div class="meta"><span>Kaynak: Kontrol Sistemi Kullanıcı Arayüzü Kılavuzu v1.15, 25.05.2023</span><span>CAN: BYM6.dbc</span><span>Konsept, Ekim 2026</span><span>Simüle edilmiş veriler</span></div>
 
     <h2>Kısaca</h2>
     <div class="grid">
@@ -151,8 +173,7 @@ html[lang="en"] [data-lang="en"], html[lang="tr"] [data-lang="tr"] { display: bl
         <tr><td>Kritik alarmlar</td><td>Alarm metnini gösteren açılır pencere.</td><td>Açılır pencere önce yapılması gereken tek şeyi söyler, sonra tüm adımlara bağlantı verir. Birden fazla alarm üst üste binmek yerine sıraya girer.</td><td class="ref">s. 18</td></tr>
         <tr><td>DPF rejenerasyonu</td><td>Sürüş ekranında yanıp sönen bir lamba. Düğme, is ve kül değerleri Tanılama altında, 6.8 numaralı pencerede. Seviye tablosu Deutz ve Volvo Penta için farklı.</td><td>Ayrı bir Egzoz ekranı, is yükünü 3–6 seviyelerine göre ve her seviyenin anlamıyla gösterir. Rehberli kontrol listesi makinenin park halinde, boşta ve sıcak olduğunu, engelleme anahtarının İzin konumunda olduğunu ve egzoz çevresinin boş olduğunu doğrular. Başlat düğmesi ancak o zaman açılır. Park freni indirilirse işlem kendiliğinden durur.</td><td class="ref">s. 30–32, 127–129</td></tr>
         <tr><td>Sıcak egzoz güvenliği</td><td>Boş bırakılması gereken mesafeler kılavuzda yazılı.</td><td>Aynı 0,6 m ve 1,5 m kuralları rejenerasyondan önce ekranda onaylanır. Egzoz sıcakken “Sıcak egzoz” işareti görünür.</td><td class="ref">s. 32</td></tr>
-        <tr><td>Destek ayakları</td><td>Açılır pencerede her ayak için limit şalteri ve valf sembolleri.</td><td>Makinenin üstten görünümü ve her ayağın durumu yazıyla. Bir ayağa dokununca şalterleri ve valfleri görünür. “Kavlak almaya hazır mı?” listesi ve buna göre bom sınırları.</td><td class="ref">s. 35–40</td></tr>
-        <tr><td>Gezinme</td><td>Altı numaralı ana pencere, alt görünüm ve alt liste simgeleri, kahverengi sayfa okları.</td><td>Her zaman görünen, yazılı etiketli bir yan menü. Servis işlevleri, göreve göre gruplanmış ve aranabilir tek bir merkezde.</td><td class="ref">s. 9–13</td></tr>
+                <tr><td>Gezinme</td><td>Altı numaralı ana pencere, alt görünüm ve alt liste simgeleri, kahverengi sayfa okları.</td><td>Her zaman görünen, yazılı etiketli bir yan menü. Servis işlevleri, göreve göre gruplanmış ve aranabilir tek bir merkezde.</td><td class="ref">s. 9–13</td></tr>
         <tr><td>Değer değiştirme</td><td>Yukarı ve aşağı düğmeleri. Kabul etmek için alanın dışına dokunulur. Kaydedilmemiş bir şey varsa kırmızı Kaydet düğmesi.</td><td>Aralık kontrollü tuş takımıyla giriş, eski ve yeni değeri gösteren kontrol adımı, sonra Kaydet. Her değişiklik erişim seviyesiyle kaydedilir ve geri alınabilir.</td><td class="ref">s. 14–15</td></tr>
         <tr><td>Erişim seviyeleri</td><td>Seviyenin yetersiz olduğunu söyleyen bir açılır pencere.</td><td>Geçerli seviye her zaman üst çubukta. Kilitli öğelerde kilit simgesi var. Birine dokununca kod istenir ve ardından yapılan işleme devam edilir. 15 dakika sonra otomatik çıkış.</td><td class="ref">s. 16</td></tr>
         <tr><td>USB, yedekleme, güncelleme</td><td>Önce acil durdurmaya basma kuralı kılavuzda bir uyarı olarak yazılı.</td><td>USB akışı, herhangi bir işlem başlamadan önce acil durdurmaya basıldığını kontrol eder. Güncellemelerdeki 30 saniyelik iptal süresi görünür bir geri sayımdır.</td><td class="ref">s. 6, 141–143</td></tr>
@@ -162,13 +183,36 @@ html[lang="en"] [data-lang="en"], html[lang="tr"] [data-lang="tr"] { display: bl
       </tbody>
     </table></div>
 
+    <h2>Gerçek CAN veritabanı üzerine kuruldu (BYM6)</h2>
+    <p>Prototip artık makinenin CAN veritabanı BYM6.dbc ile çalışıyor: 16 mesaj ve 124 sinyal. Simülatör değerlerini DBC bit düzenine göre gerçek 8 baytlık çerçevelere paketler ve her ekran yalnızca bu çerçevelerden çözdüğünü gösterir. Aynı ekranlar ileride bir CAN geçidinden beslenebilir.</p>
+    <div class="scroll"><table class="tbl">
+      <thead><tr><th>Alan</th><th>Hattın verdiği</th><th>Arayüzün gösterimi</th></tr></thead>
+      <tbody>
+        <tr><td>Mikser tamburu</td><td>Sola veya sağa dönüş, kilit, kumandanın kabinde veya arkada olması, dört kol konumu, bobin akımları</td><td>Destek ayakları yerine Mikser ekranı: hareketli tambur, kumandanın hangi istasyonda olduğu, canlı kol çubukları ve “Boşaltmaya hazır mı?” listesi.</td></tr>
+        <tr><td>Frenler</td><td>Ön, arka ve park devreleri: akümülatör basıncı, uygulanan basınç, akümülatör arızası, sensör arızaları</td><td>Sürüş ekranında üç devreli panel. Arızalı bir sensör yanıltıcı 0 bar yerine her zaman “Sensör arızası” gösterir.</td></tr>
+        <tr><td>Güç aktarma</td><td>F/N/R, her yönde 1–3 vitesler, tork konvertör kilidi, retarder, boşa alma uyarısı, kavrama bobin akımları</td><td>Kilitleme ve retarder etiketleriyle F2 / R1 vites gösterimi. Valfler sayfası açık devreleri bulmak için komut verilen ve ölçülen bobin akımını karşılaştırır.</td></tr>
+        <tr><td>Motor</td><td>Devir, saat, sıcaklıklar, basınçlar, ön ısıtma, marş, durdurma gecikmesi, en fazla 5 J1939 arıza kodu</td><td>Çalıştırma rehberliği (“Ön ısıtma · bekleyin”, “Çalıştırmak için boşa alın”) ve SPN ile FMI’dan sade metne çevrilmiş arıza kodları.</td></tr>
+        <tr><td>Arka istasyon</td><td>Arka ECU (MRS) durumu ve ona giden ve ondan gelen sinyaller</td><td>Mikser ekranında çevrimiçi veya çevrimdışı durumu, bağlantı koptuğunda uyarı.</td></tr>
+        <tr><td>Kabin</td><td>Kapılar, emniyet kemeri, direksiyon kilidi, ışıklar, sinyaller, korna, ısıtmalı cam, klima</td><td>Sürüş ekranında sinyal okları, hareket halinde kapı açık veya kemer takılı değilse uyarı.</td></tr>
+        <tr><td>Veri kaybı</td><td>Mesaj zamanlaması</td><td>ECU çerçeveleri 1 saniyeden uzun süre gelmezse değerler –– olur ve “ECU’dan veri yok” uyarısı çıkar. Tanılama › CAN hattı tüm çerçeveleri canlı gösterir.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="flag" style="margin-top:14px"><b>BYM6.dbc içindeki açık sorular</b>
+      <ul class="clean" style="margin-top:8px">
+        <li>İs, DEF veya SCR sinyali yok. Egzoz ekranı için motorun kendi J1939 mesajları gerekir. Motorda egzoz arıtma yoksa bu ekran kaldırılmalıdır.</li>
+        <li>Neredeyse hiç birim yok. Basınçlar bar veya kPa, sıcaklıklar °C varsayıldı. CAN hattı sayfası her varsayımı işaretler.</li>
+        <li>Yakıt seviyesi ve gaz pedalı ham 0–255. Akü voltajı bit başına 0,5 V ile çok kaba. Hidrolik ve şanzıman yağ sıcaklıkları 0 °C altını gösteremiyor.</li>
+        <li>Kol konumları ham 0–65535 ve kalibrasyon sınırları gerekiyor. MIXER_RIGHT_COIL_CURRENT_MA_2 muhtemelen sol bobin.</li>
+        <li>Mesaj çevrim süreleri yok, bu yüzden 1 saniyelik zaman aşımı bir varsayım. Acil durdurma, operatör varlığı veya izolasyon sinyali yok.</li>
+      </ul></div>
+
     <h2>Uygulanan tasarım kuralları</h2>
     <ul class="clean">
       <li><b>Gri, normal demektir.</b> Renk yalnızca dikkat gerektiren durumlar için kullanılır. Böylece kırmızı veya turuncu bir öğe ilk bakışta fark edilir. Bu yaklaşım ISA-101 gibi yüksek performanslı HMI uygulamalarına dayanır.</li>
       <li><b>Yazı, sembolden önce gelir.</b> Her lambanın, düğmenin ve durumun yazılı bir adı vardır. Semboller yazıyı destekler, hiçbir zaman yerine geçmez.</li>
       <li><b>Ciddiyet üç şekilde gösterilir.</b> Renk, şekil ve kelimeyle: alarm için kırmızı kare, uyarı için turuncu daire, bilgi için gri kutu. Renk körü operatörler için de çalışır.</li>
       <li><b>Eldiven ve titreşim.</b> Dokunma alanları en az 44 piksel, çoğu 56 piksel veya daha büyüktür. Sayılar, rakamları sabit genişlikte olan dar bir yazı tipiyle gösterilir, böylece değerler değişirken zıplamaz.</li>
-      <li><b>Kilitlemeler açıklanır.</b> Makine bir işlemi reddettiğinde ekran nedenini ve neyin değişmesi gerektiğini söyler. Örneğin “Sürüş engellendi: destek ayakları aşağıda”.</li>
+      <li><b>Kilitlemeler açıklanır.</b> Makine bir işlemi reddettiğinde ekran nedenini ve neyin değişmesi gerektiğini söyler. Örneğin “Çalıştırmak için boşa alın” veya yanıltıcı bir değer yerine “Sensör arızası”.</li>
     </ul>
 
     <h2>Varsayımlar ve açık sorular</h2>

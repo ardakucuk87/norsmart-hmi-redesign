@@ -392,3 +392,66 @@ a { color: var(--accent); }
 .rail button span { text-align: center; line-height: 1.15; padding: 0 2px; }
 .indrow { flex: 1; min-width: 0; display: flex; gap: 10px; overflow: hidden; }
 .indrow .ind { flex: 0 1 auto; min-width: 72px; overflow: hidden; text-overflow: ellipsis; display: block; line-height: 46px; }
+
+/* ---------- BYM6 CAN build ---------- */
+.nodata { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 12px; background: var(--redSoft); border: 2px solid var(--red); color: var(--txt); flex: none; }
+.nodata svg { width: 26px; height: 26px; color: var(--redTxt); flex: none; }
+.nodata b { font-size: 18px; }
+.nodata span { flex: 1; color: var(--txt2); font-size: 15px; }
+.srcnote { display: flex; gap: 10px; align-items: center; padding: 10px 14px; border-radius: 12px; border: 1px dashed var(--line3); color: var(--mut); font-size: 14px; line-height: 1.35; }
+.srcnote svg { width: 20px; height: 20px; flex: none; }
+
+.sigrow { display: flex; align-items: center; gap: 10px; min-height: 34px; }
+.sig { width: 40px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--line3); border: 1px solid var(--line2); }
+.sig svg { width: 24px; height: 24px; }
+.sig.on { color: #0F2A12; background: #4CC38A; border-color: #4CC38A; }
+
+.bgrid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px; }
+.bcell { background: var(--panel2); border-radius: 10px; padding: 8px 10px; display: flex; flex-direction: column; gap: 6px; border: 1px solid transparent; }
+.bcell.alarm { border-color: var(--red); background: var(--redSoft); }
+.bcell.sensor { border-color: var(--amber); }
+.bcell .card-h .pill { height: 24px; font-size: 12px; padding: 0 8px; }
+.brow { display: flex; justify-content: space-between; align-items: baseline; font-size: 14px; color: var(--mut); }
+.brow b { font-size: 20px; color: var(--txt); }
+.brow small { font-size: 12px; }
+.sensbad { color: var(--amberTxt); font-weight: 700; font-size: 15px; }
+
+.lever { display: grid; grid-template-columns: 150px minmax(0,1fr) 70px 56px; gap: 12px; align-items: center; min-height: 40px; font-size: 16px; }
+.lever b { text-align: right; font-size: 22px; }
+.lever b small { font: 500 13px Barlow, sans-serif; color: var(--mut); }
+
+.dtc { background: var(--panel2); border-radius: 10px; padding: 10px 14px; border-left: 0; }
+
+.canrow { display: flex; align-items: center; gap: 8px; min-height: 38px; padding: 0 8px; border-radius: 8px; background: var(--panel2); border: 2px solid transparent; font-size: 13px; width: 100%; text-align: left; white-space: nowrap; }
+.canrow.sel { border-color: var(--accent); }
+.canrow .hex { flex: 1; color: var(--txt2); letter-spacing: .02em; }
+.canrow .age { width: 56px; text-align: right; color: var(--mut); font-size: 12px; }
+.canrow.stale { background: var(--redSoft); }
+.canrow.stale .hex { color: var(--mut); }
+.cantbl td, .cantbl th { padding: 7px 8px; font-size: 13px; }
+.cantbl td.mono { font-size: 12.5px; }
+.cantbl .note { font-family: 'Barlow', sans-serif; font-size: 12.5px; color: var(--amberTxt); margin-top: 2px; }
+.assumed { color: var(--amberTxt); font-weight: 700; margin-left: 2px; }
+
+/* mixer drawing */
+.mixmap { position: relative; width: 460px; flex: none; overflow: hidden; }
+.truck { position: absolute; left: 20px; right: 20px; top: 110px; height: 230px; }
+.truck .cab { position: absolute; left: 0; top: 40px; width: 110px; height: 130px; border-radius: 16px 10px 6px 6px; background: var(--panel3); border: 2px solid var(--line3); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 15px; color: var(--mut); }
+.truck .rearst { position: absolute; right: 0; top: 100px; width: 70px; height: 70px; border-radius: 8px; background: var(--panel3); border: 2px solid var(--line3); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 12px; color: var(--mut); text-align: center; line-height: 1.15; }
+.truck .ctl { border-color: var(--accent); color: var(--txt); background: var(--accentBg); }
+.truck .ctl b { font-size: 12px; color: var(--accent); }
+.truck .rearst.off { border-style: dashed; border-color: var(--amber); }
+.truck .drum { position: absolute; left: 124px; top: 10px; width: 216px; height: 150px; border-radius: 48% 52% 40% 60% / 50% 50% 50% 50%; background: var(--line3); overflow: hidden; transform: rotate(-10deg); border: 3px solid var(--line3); }
+.truck .drum .stripes { position: absolute; inset: -40px -200px; background: repeating-linear-gradient(115deg, transparent 0 22px, rgba(255,255,255,.10) 22px 40px); }
+.truck .drum.spinR .stripes { animation: drumR 1.2s linear infinite; }
+.truck .drum.spinL .stripes { animation: drumL 1.2s linear infinite; }
+.truck .drum.spinR, .truck .drum.spinL { border-color: var(--accent); }
+.truck .drum.locked { border-color: var(--amber); }
+@keyframes drumR { to { transform: translateX(43px); } }
+@keyframes drumL { to { transform: translateX(-43px); } }
+.lockbadge { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%) rotate(10deg); display: inline-flex; align-items: center; gap: 6px; background: var(--amber); color: var(--amberInk); font-weight: 700; padding: 4px 10px; border-radius: 8px; font-size: 14px; }
+.lockbadge svg { width: 16px; height: 16px; }
+.truck .chassis { position: absolute; left: 0; right: 0; top: 172px; height: 12px; border-radius: 4px; background: var(--line3); }
+.truck .wheel { position: absolute; top: 172px; width: 52px; height: 52px; border-radius: 26px; background: var(--panel2); border: 6px solid var(--line3); }
+.drumtxt { position: absolute; left: 20px; right: 20px; top: 370px; text-align: center; }
+@media (prefers-reduced-motion: reduce) { .truck .drum .stripes { animation: none !important; } }

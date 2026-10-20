@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>NorSmart HMI Concept</title>
-<meta name="description" content="Interactive redesign concept for the NorSmart 3 Stage V machine display, in English and Turkish. Simulated data.">
+<meta name="description" content="Interactive redesign concept for the NorSmart 3 Stage V machine display, built on the BYM6 CAN database. English and Turkish. Simulated data.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=5">
+<link rel="stylesheet" href="styles.css?v=7">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%23121417'/%3E%3Cpath d='M5 17a7 7 0 1 1 14 0' fill='none' stroke='%237DB8FF' stroke-width='2.2' stroke-linecap='round'/%3E%3Cpath d='M12 15l3.5-3.5' stroke='%23E8EAED' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E">
 </head>
 <body>
@@ -38,28 +38,37 @@
     </div>
 
     <div class="grp">
-      <h2 data-i18n="Machine controls">Machine controls</h2>
+      <h2 data-i18n="Engine and drive">Engine and drive</h2>
+      <div class="row"><span class="lbl" data-i18n="Ignition">Ignition</span><button class="pbtn" data-p="ign" id="pIgn"></button></div>
       <div class="row"><span class="lbl" data-i18n="Engine">Engine</span><button class="pbtn" data-p="engine" id="pEngine"></button></div>
-      <div class="row"><span class="lbl" data-i18n="Direction">Direction</span><div class="seg" id="pDir"><button data-p="dir" data-v="R">R</button><button data-p="dir" data-v="N">N</button><button data-p="dir" data-v="F">F</button></div></div>
-      <div class="row"><span class="lbl" data-i18n="Throttle">Throttle</span><input type="range" id="pThrottle" min="0" max="100" value="35" aria-label="Throttle" data-i18n-aria="Throttle"><span id="pThrottleV" style="width:44px;text-align:right;font-size:14px">35%</span></div>
+      <div class="row"><span class="lbl" data-i18n="Drive lever">Drive lever</span><div class="seg" id="pDir"><button data-p="dir" data-v="R">R</button><button data-p="dir" data-v="N">N</button><button data-p="dir" data-v="F">F</button></div></div>
+      <div class="row"><span class="lbl" data-i18n="Gas pedal">Gas pedal</span><input type="range" id="pThrottle" min="0" max="100" value="35" aria-label="Gas pedal" data-i18n-aria="Gas pedal"><span id="pThrottleV" style="width:44px;text-align:right;font-size:14px">35%</span></div>
       <div class="row"><span class="lbl" data-i18n="Parking brake">Parking brake</span><button class="pbtn" data-p="park" id="pPark"></button></div>
       <div class="row"><span class="lbl" data-i18n="Brake pedal">Brake pedal</span><button class="pbtn" data-p="pedal" id="pPedal"></button></div>
-      <div class="row"><span class="lbl" data-i18n="Emergency stop">Emergency stop</span><button class="pbtn estop danger" data-p="estop" id="pEstop"></button></div>
-      <div class="row"><span class="lbl" data-i18n="Support legs">Support legs</span>
-        <button class="pbtn" data-p="legs" data-v="down" data-i18n="Lower all">Lower all</button>
-        <button class="pbtn" data-p="legs" data-v="up" data-i18n="Raise all">Raise all</button>
-      </div>
-      <div class="row"><span class="lbl"></span>
-        <button class="pbtn" data-p="leg" data-v="0" id="pLeg0" data-i18n="LF">LF</button>
-        <button class="pbtn" data-p="leg" data-v="1" id="pLeg1" data-i18n="RF">RF</button>
-        <button class="pbtn" data-p="leg" data-v="2" id="pLeg2" data-i18n="LR">LR</button>
-        <button class="pbtn" data-p="leg" data-v="3" id="pLeg3" data-i18n="RR">RR</button>
-      </div>
-      <div class="row"><span class="lbl" data-i18n="Cab keys">Cab keys</span>
-        <button class="pbtn" data-p="test" data-i18n="Brake TEST key">Brake TEST key</button>
-        <button class="pbtn" data-p="camera" data-i18n="Camera key">Camera key</button>
-        <button class="pbtn" data-p="reboot" data-i18n="Power cycle">Power cycle</button>
-      </div>
+    </div>
+
+    <div class="grp">
+      <h2 data-i18n="Mixer drum">Mixer drum</h2>
+      <div class="row"><span class="lbl" data-i18n="Drum">Drum</span><div class="seg" id="pDrum"><button data-p="drum" data-v="-1" data-i18n="Left">Left</button><button data-p="drum" data-v="0" data-i18n="Stop">Stop</button><button data-p="drum" data-v="1" data-i18n="Right">Right</button></div></div>
+      <div class="row"><span class="lbl" data-i18n="Control at">Control at</span><div class="seg" id="pCtrl"><button data-p="ctrl" data-v="front" data-i18n="Cab">Cab</button><button data-p="ctrl" data-v="rear" data-i18n="Rear station">Rear station</button></div></div>
+      <div class="row"><span class="lbl" data-i18n="Drum lock">Drum lock</span><button class="pbtn" data-p="drumLock" id="pLock"></button></div>
+      <div class="row"><span class="lbl" data-i18n="Rear station">Rear station</span><button class="pbtn" data-p="mix" data-v="up" data-i18n="Mixer up">Mixer up</button><button class="pbtn" data-p="mix" data-v="down" data-i18n="Mixer down">Mixer down</button></div>
+      <div class="row"><span class="lbl"></span><button class="pbtn" data-p="half" data-v="up" data-i18n="Half-throttle +">Half-throttle +</button><button class="pbtn" data-p="half" data-v="down" data-i18n="Half-throttle −">Half-throttle −</button></div>
+    </div>
+
+    <div class="grp">
+      <h2 data-i18n="Cab and lights">Cab and lights</h2>
+      <div class="row"><span class="lbl" data-i18n="Doors">Doors</span><button class="pbtn" data-p="door" data-v="L" id="pDoorL" data-i18n="Left open">Left open</button><button class="pbtn" data-p="door" data-v="R" id="pDoorR" data-i18n="Right open">Right open</button></div>
+      <div class="row"><span class="lbl" data-i18n="Seat belt">Seat belt</span><button class="pbtn" data-p="belt" id="pBelt"></button></div>
+      <div class="row"><span class="lbl" data-i18n="Steering lock">Steering lock</span><button class="pbtn" data-p="steer" id="pSteer"></button></div>
+      <div class="row"><span class="lbl" data-i18n="Signals">Signals</span><button class="pbtn" data-p="signal" data-v="L" id="pSigL">◀</button><button class="pbtn" data-p="signal" data-v="H" id="pHaz" data-i18n="Hazard">Hazard</button><button class="pbtn" data-p="signal" data-v="R" id="pSigR">▶</button></div>
+      <div class="row"><span class="lbl" data-i18n="Lights">Lights</span><button class="pbtn" data-p="light" data-v="head" id="pHead" data-i18n="Headlights">Headlights</button><button class="pbtn" data-p="light" data-v="work" id="pWork" data-i18n="Work lamps">Work lamps</button><button class="pbtn" data-p="light" data-v="horn" data-i18n="Horn">Horn</button></div>
+    </div>
+
+    <div class="grp">
+      <h2 data-i18n="CAN bus faults">CAN bus faults</h2>
+      <div class="row"><span class="lbl" data-i18n="Simulate">Simulate</span><button class="pbtn danger" data-p="can" data-v="all" id="pCanAll" data-i18n="Unplug CAN">Unplug CAN</button><button class="pbtn danger" data-p="can" data-v="mrs" id="pCanMrs" data-i18n="Drop rear ECU">Drop rear ECU</button></div>
+      <div class="row"><span class="lbl" data-i18n="Cab keys">Cab keys</span><button class="pbtn" data-p="test" data-i18n="Brake TEST key">Brake TEST key</button><button class="pbtn" data-p="camera" data-i18n="Camera key">Camera key</button><button class="pbtn" data-p="reboot" data-i18n="Power cycle">Power cycle</button></div>
     </div>
 
     <div class="grp">
@@ -72,8 +81,10 @@
       <ul class="try">
         <li data-i18n="Switch the language with the EN / TR button at the top of the display.">Switch the language with the EN / TR button at the top of the display.</li>
         <li data-i18n="Pick “Ready to regenerate”, then run the regeneration on the Exhaust screen.">Pick “Ready to regenerate”, then run the regeneration on the Exhaust screen.</li>
-        <li data-i18n="Pick “Hydraulic overheat” and watch the alarm pop up and the gauge turn red.">Pick “Hydraulic overheat” and watch the alarm pop up and the gauge turn red.</li>
-        <li data-i18n="Lower the legs and try to drive. See how the display explains the block.">Lower the legs and try to drive. See how the display explains the block.</li>
+        <li data-i18n="Pick “Discharging at rear” and watch the drum on the Mixer screen.">Pick “Discharging at rear” and watch the drum on the Mixer screen.</li>
+        <li data-i18n="Pick “Brake sensor fault” and see Sensor fault instead of a false 0 bar.">Pick “Brake sensor fault” and see Sensor fault instead of a false 0 bar.</li>
+        <li data-i18n="Press Unplug CAN and see every value turn to ––.">Press Unplug CAN and see every value turn to ––.</li>
+        <li data-i18n="Open Diagnostics › CAN bus to watch the real BYM6 frames.">Open Diagnostics › CAN bus to watch the real BYM6 frames.</li>
         <li data-i18n="Service: log in as Maintenance and change a parameter. Then undo it.">Service: log in as Maintenance and change a parameter. Then undo it.</li>
         <li data-i18n="Press the Brake TEST key and run the brake test.">Press the Brake TEST key and run the brake test.</li>
         <li data-i18n="Switch to Day mode with the sun button at the top right.">Switch to Day mode with the sun button at the top right.</li>
@@ -91,7 +102,8 @@
 
 <p class="foot" data-i18n="Independent design concept for review. Not affiliated with or endorsed by Normet. All values are simulated and must not be used as machine parameters.">Independent design concept for review. Not affiliated with or endorsed by Normet. All values are simulated and must not be used as machine parameters.</p>
 
-<script src="i18n.js?v=5"></script>
-<script src="app.js?v=5"></script>
+<script src="can-db.js?v=7"></script>
+<script src="i18n.js?v=7"></script>
+<script src="app.js?v=7"></script>
 </body>
 </html>
