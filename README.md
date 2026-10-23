@@ -16,6 +16,10 @@ To regenerate after a DBC change:
 python3 -I tools/dbc2js.py path/to/BYM6.dbc can-db.js
 ```
 
+## Pictograms
+
+Lamp, gauge and alert symbols come from the BYM pictogram sheet (`BYM_PNG.xlsx`). `tools/pictograms.py` crops them, makes the background transparent and saves them in `pictograms/`, so the UI can colour them by state with CSS masks.
+
 ## What is in it
 
 - Six screens: Drive, Exhaust (Stage V aftertreatment, simulated: not in BYM6), Alerts, Mixer, Diagnostics (engine and fault codes, valves, live CAN bus, brake test) and Service.

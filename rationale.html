@@ -109,6 +109,7 @@ html[lang="en"] [data-lang="en"], html[lang="tr"] [data-lang="tr"] { display: bl
         <tr><td>Data loss</td><td>Message timing</td><td>If ECU frames stop for more than 1 second, values turn to –– with a “No data from ECU” banner. Diagnostics › CAN bus shows every frame live.</td></tr>
       </tbody>
     </table></div>
+    <p style="margin-top:14px"><b>Pictograms.</b> All lamp, gauge and alert symbols come from the BYM pictogram sheet (BYM_PNG.xlsx), matched to their CAN signal. They are recoloured by state: grey when off, white when on, amber for a warning, red for an alarm. Signals with no pictogram in the sheet keep a text label: hydraulic oil temperature, horn, reverse lamp, transmission filter and coil short circuit, drum direction and control side, rear station and CAN loss.</p>
     <div class="flag" style="margin-top:14px"><b>Open questions in BYM6.dbc</b>
       <ul class="clean" style="margin-top:8px">
         <li>No soot, DEF or SCR signals. The Exhaust screen needs the engine's own J1939 messages, or should be removed if the engine has no aftertreatment.</li>
@@ -197,6 +198,7 @@ html[lang="en"] [data-lang="en"], html[lang="tr"] [data-lang="tr"] { display: bl
         <tr><td>Veri kaybı</td><td>Mesaj zamanlaması</td><td>ECU çerçeveleri 1 saniyeden uzun süre gelmezse değerler –– olur ve “ECU’dan veri yok” uyarısı çıkar. Tanılama › CAN hattı tüm çerçeveleri canlı gösterir.</td></tr>
       </tbody>
     </table></div>
+    <p style="margin-top:14px"><b>Piktogramlar.</b> Tüm lamba, gösterge ve alarm sembolleri BYM piktogram tablosundan (BYM_PNG.xlsx) alındı ve ilgili CAN sinyaliyle eşleştirildi. Duruma göre renklenirler: kapalıyken gri, açıkken beyaz, uyarıda turuncu, alarmda kırmızı. Tabloda piktogramı olmayan sinyaller yazılı etiketle gösterilir: hidrolik yağ sıcaklığı, korna, geri vites lambası, şanzıman filtresi ve bobin kısa devresi, tambur yönü ve kumanda yeri, arka istasyon ve CAN kaybı.</p>
     <div class="flag" style="margin-top:14px"><b>BYM6.dbc içindeki açık sorular</b>
       <ul class="clean" style="margin-top:8px">
         <li>İs, DEF veya SCR sinyali yok. Egzoz ekranı için motorun kendi J1939 mesajları gerekir. Motorda egzoz arıtma yoksa bu ekran kaldırılmalıdır.</li>

@@ -38,6 +38,9 @@ const hhmm = (t) => { const d = new Date(t + S.tz * 3600e3); return String(d.get
 const ago = (t) => { const s = Math.round((now() - t) / 1000); if (s < 45) return tx('just now'); const m = Math.round(s / 60); if (m < 60) return tx('{0} min ago', m); return tx('{0} h ago', Math.round(m / 60)); };
 const dur = (ms) => { const s = Math.round(ms / 1000); if (s < 60) return s + ' ' + tu('s'); const m = Math.round(s / 60); if (m < 60) return m + ' ' + tu('min'); return Math.round(m / 60) + ' ' + tu('h'); };
 const hexId = (id) => '0x' + id.toString(16).toUpperCase();
+/* BYM pictograms (from BYM_PNG.xlsx, converted by tools/pictograms.py). Coloured with currentColor via CSS mask. */
+const PIC_V = 'v8';
+const pic = (n, cls = '') => (n ? `<i class="pic ${cls}" aria-hidden="true" style="-webkit-mask-image:url(pictograms/${n}.png?${PIC_V});mask-image:url(pictograms/${n}.png?${PIC_V})"></i>` : '');
 
 const sv = (p, w = 2) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
 const I = {
@@ -287,45 +290,45 @@ const INDS = [
   { k: 'canlost', l: K('No data from ECU'), s: () => (!ecuOk() ? 'alarm' : null), go: 'engine', diag: 'can' },
   { k: 'mrs', l: K('Rear station offline'), s: () => (ecuOk() && !mrsOk() ? 'warn' : null), go: 'mixer' },
   { k: 'alarms', l: K('Active alarms'), s: () => (S.alerts.some((a) => a.active && a.sev === 'alarm') ? 'alarm' : null), go: 'alerts' },
-  { k: 'oilp', l: K('Engine oil pressure'), s: bit('ENGINE_OIL_PRESSURE_WARNING', 'alarm'), go: 'alerts' },
-  { k: 'cool', l: K('Engine coolant fault'), s: bit('ENGINE_COOLANT_FAULT', 'alarm'), go: 'alerts' },
+  { k: 'oilp', p: 'oil-pressure', l: K('Engine oil pressure'), s: bit('ENGINE_OIL_PRESSURE_WARNING', 'alarm'), go: 'alerts' },
+  { k: 'cool', p: 'coolant', l: K('Engine coolant fault'), s: bit('ENGINE_COOLANT_FAULT', 'alarm'), go: 'alerts' },
   { k: 'hydT', l: K('Hydraulic oil hot'), s: bit('HYDRAULIC_OIL_TEMP_HIGH', 'alarm'), go: 'alerts' },
-  { k: 'hydL', l: K('Hydraulic oil level low'), s: bit('HYDRAULIC_LEVEL_LOW', 'alarm'), go: 'alerts' },
-  { k: 'transP', l: K('Transmission oil pressure low'), s: bit('TRANSMISSION_OIL_PRESSURE_LOW', 'alarm'), go: 'alerts' },
+  { k: 'hydL', p: 'oil-level', l: K('Hydraulic oil level low'), s: bit('HYDRAULIC_LEVEL_LOW', 'alarm'), go: 'alerts' },
+  { k: 'transP', p: 'trans-pressure', l: K('Transmission oil pressure low'), s: bit('TRANSMISSION_OIL_PRESSURE_LOW', 'alarm'), go: 'alerts' },
   { k: 'coil', l: K('Transmission coil short circuit'), s: bit('TRANS_COIL_SHORT_CIRCUIT_WARNING', 'alarm'), go: 'engine', diag: 'valves' },
-  { k: 'acc', l: K('Brake accumulator fault'), s: bit('GENERAL_ACCUMULA_FAULT_WARNING', 'alarm'), go: 'drive' },
-  { k: 'steer', l: K('Steering wheel locked'), s: () => (one('STEERING_WHEEL_LOCKED') ? (moving(0) ? 'alarm' : 'info') : null), go: 'alerts' },
-  { k: 'eng', l: K('Engine warning'), s: bit('ENGINE_WARNING', 'warn'), go: 'engine', diag: 'engine' },
-  { k: 'dtc', l: K('Engine fault code'), s: () => (one('ACTIVE_FAULT') ? 'warn' : one('PASSIVE_FAULT') ? 'info' : null), go: 'engine', diag: 'engine' },
+  { k: 'acc', p: 'brake', l: K('Brake accumulator fault'), s: bit('GENERAL_ACCUMULA_FAULT_WARNING', 'alarm'), go: 'drive' },
+  { k: 'steer', p: 'steer-lock', l: K('Steering wheel locked'), s: () => (one('STEERING_WHEEL_LOCKED') ? (moving(0) ? 'alarm' : 'info') : null), go: 'alerts' },
+  { k: 'eng', p: 'engine', l: K('Engine warning'), s: bit('ENGINE_WARNING', 'warn'), go: 'engine', diag: 'engine' },
+  { k: 'dtc', p: 'engine', l: K('Engine fault code'), s: () => (one('ACTIVE_FAULT') ? 'warn' : one('PASSIVE_FAULT') ? 'info' : null), go: 'engine', diag: 'engine' },
   { k: 'neutral', l: K('Shift to neutral'), s: bit('GEAR_NEUTRAL_NEEDED_WARNING', 'warn'), go: 'drive' },
-  { k: 'oillvl', l: K('Engine oil level low'), s: bit('ENGINE_OIL_LEVEL_LOW', 'warn'), go: 'alerts' },
-  { k: 'water', l: K('Water in fuel'), s: bit('WATER_IN_FUEL', 'warn'), go: 'alerts' },
-  { k: 'air', l: K('Air filter blocked'), s: bit('AIR_FILTER_FAULT', 'warn'), go: 'alerts' },
-  { k: 'fuel', l: K('Fuel low'), s: bit('FUEL_LOW', 'warn'), go: 'drive' },
-  { k: 'batt', l: K('Battery not charging'), s: () => (one('BATTERY_NOT_CHARGING_WARNING_1') || one('BATTERY_NOT_CHARGING_WARNING_2') ? 'warn' : null), go: 'alerts' },
-  { k: 'transT', l: K('Transmission temperature fault'), s: bit('TRANSMISSION_TEMP_FAULT', 'warn'), go: 'alerts' },
+  { k: 'oillvl', p: 'oil-level', l: K('Engine oil level low'), s: bit('ENGINE_OIL_LEVEL_LOW', 'warn'), go: 'alerts' },
+  { k: 'water', p: 'water-fuel', l: K('Water in fuel'), s: bit('WATER_IN_FUEL', 'warn'), go: 'alerts' },
+  { k: 'air', p: 'air-filter', l: K('Air filter blocked'), s: bit('AIR_FILTER_FAULT', 'warn'), go: 'alerts' },
+  { k: 'fuel', p: 'fuel', l: K('Fuel low'), s: bit('FUEL_LOW', 'warn'), go: 'drive' },
+  { k: 'batt', p: 'battery', l: K('Battery not charging'), s: () => (one('BATTERY_NOT_CHARGING_WARNING_1') || one('BATTERY_NOT_CHARGING_WARNING_2') ? 'warn' : null), go: 'alerts' },
+  { k: 'transT', p: 'trans-temp', l: K('Transmission temperature fault'), s: bit('TRANSMISSION_TEMP_FAULT', 'warn'), go: 'alerts' },
   { k: 'transF', l: K('Transmission filter'), s: bit('TRANSMISSION_FILTER_WARNING', 'warn'), go: 'alerts' },
-  { k: 'drumlockw', l: K('Drum locked'), s: () => (one('MIXER_LOCKED_WARNING_SYMBOL') ? 'warn' : one('MIXER_LOCKED_SYMBOL') ? 'info' : null), go: 'mixer' },
-  { k: 'door', l: K('Cab door open'), s: () => (one('LEFT_DOOR_SENSOR') || one('RIGHT_DOOR_SENSOR') ? (moving(2) ? 'warn' : 'info') : null), go: 'alerts' },
-  { k: 'belt', l: K('Seat belt not fastened'), s: () => (one('SEAT_BELT') ? (moving(2) ? 'warn' : 'info') : null), go: 'alerts' },
-  { k: 'acgas', l: K('Air conditioning gas low'), s: bit('AIR_CONDITIONER_GAS_LOW', 'info'), go: 'alerts' },
+  { k: 'drumlockw', p: 'lock', l: K('Drum locked'), s: () => (one('MIXER_LOCKED_WARNING_SYMBOL') ? 'warn' : one('MIXER_LOCKED_SYMBOL') ? 'info' : null), go: 'mixer' },
+  { k: 'door', p: 'door', l: K('Cab door open'), s: () => (one('LEFT_DOOR_SENSOR') || one('RIGHT_DOOR_SENSOR') ? (moving(2) ? 'warn' : 'info') : null), go: 'alerts' },
+  { k: 'belt', p: 'seat-belt', l: K('Seat belt not fastened'), s: () => (one('SEAT_BELT') ? (moving(2) ? 'warn' : 'info') : null), go: 'alerts' },
+  { k: 'acgas', p: 'ac', l: K('Air conditioning gas low'), s: bit('AIR_CONDITIONER_GAS_LOW', 'info'), go: 'alerts' },
   { k: 'dpf', l: K('Regenerate DPF when parked'), s: () => (S.m.soot >= 80 ? 'alarm' : S.m.soot > 60 ? 'warn' : null), go: 'exhaust' },
-  { k: 'preheat', l: K('Preheating'), s: bit('PREHEAT_LAMP', 'info'), go: 'drive' },
-  { k: 'crank', l: K('Cranking'), s: bit('ENGINE_CRANKKING', 'info'), go: 'drive' },
-  { k: 'delay', l: K('Engine cool-down'), s: bit('ENGINE_DELAY_ACTIVE', 'info'), go: 'drive' },
-  { k: 'park', l: K('Parking brake on'), s: bit('PARKING_BRAKE_ACTIVE', 'info'), go: 'drive' },
-  { k: 'ret', l: K('Retarder active'), s: bit('RETARDER_ACTIVE', 'info'), go: 'drive' },
-  { k: 'lockup', l: K('Lock-up active'), s: bit('LOCK_UP_ACTIVE_SYMBOL', 'info'), go: 'drive' },
+  { k: 'preheat', p: 'preheat', l: K('Preheating'), s: bit('PREHEAT_LAMP', 'info'), go: 'drive' },
+  { k: 'crank', p: 'key', l: K('Cranking'), s: bit('ENGINE_CRANKKING', 'info'), go: 'drive' },
+  { k: 'delay', p: 'engine-shutoff', l: K('Engine cool-down'), s: bit('ENGINE_DELAY_ACTIVE', 'info'), go: 'drive' },
+  { k: 'park', p: 'park-brake', l: K('Parking brake on'), s: bit('PARKING_BRAKE_ACTIVE', 'info'), go: 'drive' },
+  { k: 'ret', p: 'retarder', l: K('Retarder active'), s: bit('RETARDER_ACTIVE', 'info'), go: 'drive' },
+  { k: 'lockup', p: 'lockup', l: K('Lock-up active'), s: bit('LOCK_UP_ACTIVE_SYMBOL', 'info'), go: 'drive' },
   { k: 'drumR', l: K('Drum turning right'), s: bit('MIXER_TURNING_RIGHT', 'info'), go: 'mixer' },
   { k: 'drumL', l: K('Drum turning left'), s: bit('MIXER_TURNING_LEFT', 'info'), go: 'mixer' },
   { k: 'rear', l: K('Drum control at rear'), s: bit('MIXER_CONTROL_AT_REAR_SIDE', 'info'), go: 'mixer' },
-  { k: 'hazard', l: K('Hazard lights'), s: bit('FLASHER', 'info'), go: 'drive' },
-  { k: 'head', l: K('Headlights'), s: bit('HEADLIGHT', 'info'), go: 'drive' },
-  { k: 'workF', l: K('Front work lamps'), s: bit('FRONT_WORKING_LAMP', 'info'), go: 'drive' },
-  { k: 'workR', l: K('Rear work lamps'), s: bit('REAR_WORKING_LAMP', 'info'), go: 'drive' },
+  { k: 'hazard', p: 'hazard', l: K('Hazard lights'), s: bit('FLASHER', 'info'), go: 'drive' },
+  { k: 'head', p: 'headlight', l: K('Headlights'), s: bit('HEADLIGHT', 'info'), go: 'drive' },
+  { k: 'workF', p: 'work-front', l: K('Front work lamps'), s: bit('FRONT_WORKING_LAMP', 'info'), go: 'drive' },
+  { k: 'workR', p: 'work-rear', l: K('Rear work lamps'), s: bit('REAR_WORKING_LAMP', 'info'), go: 'drive' },
   { k: 'rev', l: K('Reverse lamp'), s: bit('REVERSE_GEAR_LAMP', 'info'), go: 'drive' },
-  { k: 'win', l: K('Heated window'), s: bit('WINDOW_RESISTANCE', 'info'), go: 'drive' },
-  { k: 'ac', l: K('Air conditioning on'), s: bit('AC_SYSTEM_ACTIVE', 'info'), go: 'drive' },
+  { k: 'win', p: 'window-heat', l: K('Heated window'), s: bit('WINDOW_RESISTANCE', 'info'), go: 'drive' },
+  { k: 'ac', p: 'ac', l: K('Air conditioning on'), s: bit('AC_SYSTEM_ACTIVE', 'info'), go: 'drive' },
   { k: 'horn', l: K('Horn'), s: bit('HORN', 'info'), go: 'drive' },
 ];
 const SEVRANK = { alarm: 0, warn: 1, info: 2 };
@@ -343,11 +346,11 @@ const AD = [
     title: K('Rear control station offline'), sub: K('Rear ECU status lost'),
     what: K('The rear ECU (MRS) stopped reporting or reports a fault.'), effect: K('Drum controls and half-throttle at the rear do not work.'),
     steps: [K('Use the drum controls in the cab.'), K('Check the rear station cable and fuse.')], link: ['mixer', K('Open Mixer')] },
-  { key: 'oilp', code: 'OILP', sev: 'alarm', src: K('Engine'), c: () => one('ENGINE_OIL_PRESSURE_WARNING'),
+  { key: 'oilp', p: 'oil-pressure', code: 'OILP', sev: 'alarm', src: K('Engine'), c: () => one('ENGINE_OIL_PRESSURE_WARNING'),
     title: K('Engine oil pressure low'), sub: () => tx('{0} bar', f1(G.oilBar())),
     what: () => tx('Engine oil pressure is {0} bar with the engine running.', f1(G.oilBar())), effect: K('Running on can damage the engine within minutes.'),
     steps: [K('Stop the engine as soon as it is safe.'), K('Check the engine oil level.'), K('Do not restart until maintenance has checked it.')], link: ['engine', K('Open Diagnostics'), 'engine'] },
-  { key: 'cool', code: 'COOL', sev: 'alarm', src: K('Engine'), c: () => one('ENGINE_COOLANT_FAULT'),
+  { key: 'cool', p: 'coolant', code: 'COOL', sev: 'alarm', src: K('Engine'), c: () => one('ENGINE_COOLANT_FAULT'),
     title: K('Engine coolant fault'), sub: () => tx('Coolant {0} °C', f0(G.coolant())),
     what: () => tx('The engine reports a coolant fault. Coolant is at {0} °C.', f0(G.coolant())), effect: K('The engine may derate or shut down.'),
     steps: [K('Let the engine idle to cool, then stop it.'), K('Check the coolant level when cold.')], link: ['drive', K('See gauge on Drive')] },
@@ -355,15 +358,15 @@ const AD = [
     title: K('Hydraulic oil temperature high'), sub: () => tx('{0} °C', f0(G.hyd())),
     what: () => tx('Hydraulic oil is at {0} °C.', f0(G.hyd())), effect: K('Seals and pumps wear faster. Drum speed may be limited.'),
     steps: [K('Stop drum work if possible.'), K('Check the oil cooler for dust or blockage.'), K('If it stays high, call maintenance.')], trend: true, link: ['drive', K('See gauge on Drive')] },
-  { key: 'hydL', code: 'HYD-L', sev: 'alarm', src: K('Hydraulics'), c: () => one('HYDRAULIC_LEVEL_LOW'),
+  { key: 'hydL', p: 'oil-level', code: 'HYD-L', sev: 'alarm', src: K('Hydraulics'), c: () => one('HYDRAULIC_LEVEL_LOW'),
     title: K('Hydraulic oil level low'), sub: K('Check for leaks'),
     what: K('The hydraulic tank level switch reports low oil.'), effect: K('Pumps can draw air and get damaged.'),
     steps: [K('Stop and look for leaks.'), K('Top up hydraulic oil before continuing.')] },
-  { key: 'transP', code: 'TR-P', sev: 'alarm', src: K('Transmission'), c: () => one('TRANSMISSION_OIL_PRESSURE_LOW'),
+  { key: 'transP', p: 'trans-pressure', code: 'TR-P', sev: 'alarm', src: K('Transmission'), c: () => one('TRANSMISSION_OIL_PRESSURE_LOW'),
     title: K('Transmission oil pressure low'), sub: () => tx('{0} bar', f0(G.transP())),
     what: () => tx('Transmission oil pressure is {0} bar.', f0(G.transP())), effect: K('Clutches can slip and burn.'),
     steps: [K('Stop driving.'), K('Check the transmission oil level.'), K('Call maintenance.')] },
-  { key: 'coil', code: 'TR-COIL', sev: 'alarm', src: K('Transmission'), c: () => one('TRANS_COIL_SHORT_CIRCUIT_WARNING'),
+  { key: 'coil', p: 'trans-pressure', code: 'TR-COIL', sev: 'alarm', src: K('Transmission'), c: () => one('TRANS_COIL_SHORT_CIRCUIT_WARNING'),
     title: K('Transmission coil short circuit'), sub: K('A gear solenoid is shorted'),
     what: K('The ECU detected a short circuit on a transmission solenoid.'), effect: K('The affected gear may not engage.'),
     steps: [K('Stop the machine.'), K('Open Diagnostics › Valves to see which coil.')], link: ['engine', K('Open Valves'), 'valves'] },
@@ -371,27 +374,27 @@ const AD = [
     title: K('Valve current does not match command'), sub: () => valveRows().filter((r) => r.st === 'open' || r.st === 'unexpected').map((r) => tx(r.l)).join(', '),
     what: K('A clutch or drum coil is commanded but draws no current, or draws current when it should be off.'), effect: K('The gear or drum function may not work as expected.'),
     steps: [K('Open Diagnostics › Valves.'), K('Check the coil connector and wiring.')], link: ['engine', K('Open Valves'), 'valves'] },
-  { key: 'acc', code: 'BRK-ACC', sev: 'alarm', src: K('Brakes'), c: () => BRAKES.some((b) => one(b.accF)) || one('GENERAL_ACCUMULA_FAULT_WARNING'),
+  { key: 'acc', p: 'brake', code: 'BRK-ACC', sev: 'alarm', src: K('Brakes'), c: () => BRAKES.some((b) => one(b.accF)) || one('GENERAL_ACCUMULA_FAULT_WARNING'),
     title: K('Brake accumulator fault'), sub: () => BRAKES.filter((b) => one(b.accF)).map((b) => tx(b.l)).join(', ') || tx('General'),
     what: K('A brake accumulator cannot hold enough pressure.'), effect: K('Braking distance may be longer.'),
     steps: [K('Stop the machine in a safe place.'), K('Apply the parking brake.'), K('Do not drive until maintenance has checked it.')], link: ['drive', K('See brakes on Drive')] },
-  { key: 'bsens', code: 'BRK-SNS', sev: 'warn', src: K('Brakes'), c: () => BRAKES.some((b) => one(b.accS) || one(b.svcS)),
+  { key: 'bsens', p: 'brake', code: 'BRK-SNS', sev: 'warn', src: K('Brakes'), c: () => BRAKES.some((b) => one(b.accS) || one(b.svcS)),
     title: K('Brake pressure sensor fault'), sub: () => BRAKES.filter((b) => one(b.accS) || one(b.svcS)).map((b) => tx(b.l)).join(', '),
     what: K('A brake pressure sensor reports a fault. Its reading cannot be trusted.'), effect: K('The display shows Sensor fault for that value, not a number.'),
     steps: [K('Brake carefully and check the brakes work.'), K('Report it to maintenance this shift.')], link: ['drive', K('See brakes on Drive')] },
-  { key: 'tsens', code: 'TR-SNS', sev: 'warn', src: K('Transmission'), c: () => one('TRANSMISSION_PRESS_SENSOR_FAULT'),
+  { key: 'tsens', p: 'trans-pressure', code: 'TR-SNS', sev: 'warn', src: K('Transmission'), c: () => one('TRANSMISSION_PRESS_SENSOR_FAULT'),
     title: K('Transmission pressure sensor fault'), sub: K('Pressure reading not reliable'),
     what: K('The transmission pressure sensor reports a fault.'), effect: K('Low-pressure protection may not work.'),
     steps: [K('Report it to maintenance this shift.')] },
-  { key: 'steer', code: 'STEER', sev: 'alarm', src: K('Cab'), c: () => one('STEERING_WHEEL_LOCKED') && moving(0),
+  { key: 'steer', p: 'steer-lock', code: 'STEER', sev: 'alarm', src: K('Cab'), c: () => one('STEERING_WHEEL_LOCKED') && moving(0),
     title: K('Steering wheel locked while moving'), sub: () => tx('{0} km/h', f0(G.speed())),
     what: K('The steering lock is on while the machine moves.'), effect: K('The machine cannot be steered.'),
     steps: [K('Brake and stop now.'), K('Release the steering lock before driving.')] },
-  { key: 'door', code: 'DOOR', sev: 'warn', src: K('Cab'), c: () => (one('LEFT_DOOR_SENSOR') || one('RIGHT_DOOR_SENSOR')) && moving(2),
+  { key: 'door', p: 'door', code: 'DOOR', sev: 'warn', src: K('Cab'), c: () => (one('LEFT_DOOR_SENSOR') || one('RIGHT_DOOR_SENSOR')) && moving(2),
     title: K('Cab door open while moving'), sub: () => [one('LEFT_DOOR_SENSOR') ? tx('Left') : '', one('RIGHT_DOOR_SENSOR') ? tx('Right') : ''].filter(Boolean).join(' + '),
     what: K('A cab door is open while the machine moves.'), effect: K('Risk of falling out or being hit.'),
     steps: [K('Stop and close the door.')] },
-  { key: 'belt', code: 'BELT', sev: 'warn', src: K('Cab'), c: () => one('SEAT_BELT') && moving(2),
+  { key: 'belt', p: 'seat-belt', code: 'BELT', sev: 'warn', src: K('Cab'), c: () => one('SEAT_BELT') && moving(2),
     title: K('Seat belt not fastened'), sub: K('While moving'),
     what: K('The seat belt is not fastened while the machine moves.'), effect: K('No protection in a rollover or collision.'),
     steps: [K('Stop and fasten the seat belt.')] },
@@ -399,27 +402,27 @@ const AD = [
     title: K('Shift to neutral'), sub: K('Needed to start the engine'),
     what: K('The engine will only start with the drive lever in neutral.'), effect: K('The starter is blocked.'),
     steps: [K('Move the drive lever to N.'), K('Start the engine again.')] },
-  { key: 'eng', code: 'ENG', sev: 'warn', src: K('Engine'), c: () => one('ENGINE_WARNING') && !one('ENGINE_OIL_PRESSURE_WARNING') && !one('ENGINE_COOLANT_FAULT'),
+  { key: 'eng', p: 'engine', code: 'ENG', sev: 'warn', src: K('Engine'), c: () => one('ENGINE_WARNING') && !one('ENGINE_OIL_PRESSURE_WARNING') && !one('ENGINE_COOLANT_FAULT'),
     title: K('Engine warning lamp on'), sub: K('See engine fault codes'),
     what: K('The engine controller has a warning.'), effect: K('Depends on the fault. Check the fault codes.'),
     steps: [K('Open Diagnostics › Engine for the fault codes.')], link: ['engine', K('Open Diagnostics'), 'engine'] },
-  { key: 'oillvl', code: 'OIL-L', sev: 'warn', src: K('Engine'), c: () => one('ENGINE_OIL_LEVEL_LOW'),
+  { key: 'oillvl', p: 'oil-level', code: 'OIL-L', sev: 'warn', src: K('Engine'), c: () => one('ENGINE_OIL_LEVEL_LOW'),
     title: K('Engine oil level low'), sub: K('Top up at the next stop'), what: K('The engine oil level switch reports low oil.'), effect: K('None yet.'), steps: [K('Top up engine oil at the next stop.')] },
-  { key: 'water', code: 'WIF', sev: 'warn', src: K('Fuel system'), c: () => one('WATER_IN_FUEL'),
+  { key: 'water', p: 'water-fuel', code: 'WIF', sev: 'warn', src: K('Fuel system'), c: () => one('WATER_IN_FUEL'),
     title: K('Water in fuel'), sub: K('Drain the water separator'), what: K('The fuel filter sensor detected water.'), effect: K('Injectors can be damaged if it continues.'), steps: [K('Drain the water separator at the next stop.')] },
-  { key: 'air', code: 'AIR', sev: 'warn', src: K('Engine'), c: () => one('AIR_FILTER_FAULT'),
+  { key: 'air', p: 'air-filter', code: 'AIR', sev: 'warn', src: K('Engine'), c: () => one('AIR_FILTER_FAULT'),
     title: K('Air filter blocked'), sub: K('Replace at the next service'), what: K('The air filter restriction switch is on.'), effect: K('Less engine power and more smoke.'), steps: [K('Clean or replace the air filter.')] },
-  { key: 'fuel', code: 'FUEL', sev: 'warn', src: K('Fuel system'), c: () => one('FUEL_LOW'),
+  { key: 'fuel', p: 'fuel', code: 'FUEL', sev: 'warn', src: K('Fuel system'), c: () => one('FUEL_LOW'),
     title: K('Fuel low'), sub: () => tx('{0} left', pct(f0(G.fuel()))), what: K('The fuel tank is nearly empty.'), effect: K('None yet.'), steps: [K('Refuel at the next opportunity.')], link: ['drive', K('See gauge on Drive')] },
-  { key: 'batt', code: 'BATT', sev: 'warn', src: K('Electrical'), c: () => one('BATTERY_NOT_CHARGING_WARNING_1') || one('BATTERY_NOT_CHARGING_WARNING_2'),
+  { key: 'batt', p: 'battery', code: 'BATT', sev: 'warn', src: K('Electrical'), c: () => one('BATTERY_NOT_CHARGING_WARNING_1') || one('BATTERY_NOT_CHARGING_WARNING_2'),
     title: K('Battery not charging'), sub: () => tx('{0} V', f1(G.battery())), what: K('The alternator is not charging the batteries.'), effect: K('The machine will stop when the batteries run flat.'), steps: [K('Check the alternator belt.'), K('Report it to maintenance.')] },
-  { key: 'transT', code: 'TR-T', sev: 'warn', src: K('Transmission'), c: () => one('TRANSMISSION_TEMP_FAULT'),
+  { key: 'transT', p: 'trans-temp', code: 'TR-T', sev: 'warn', src: K('Transmission'), c: () => one('TRANSMISSION_TEMP_FAULT'),
     title: K('Transmission temperature fault'), sub: () => tx('{0} °C', f0(G.transT())), what: K('Transmission oil is too hot or its sensor is faulty.'), effect: K('Clutch wear increases.'), steps: [K('Drive in a lower gear and let it cool.')] },
   { key: 'transF', code: 'TR-F', sev: 'warn', src: K('Transmission'), c: () => one('TRANSMISSION_FILTER_WARNING'),
     title: K('Transmission filter clogged'), sub: K('Replace at the next service'), what: K('The transmission filter restriction switch is on.'), effect: K('None yet.'), steps: [K('Replace the transmission filter at the next service.')] },
-  { key: 'drumlock', code: 'DRUM-L', sev: 'warn', src: K('Mixer drum'), c: () => one('MIXER_LOCKED_WARNING_SYMBOL'),
+  { key: 'drumlock', p: 'lock', code: 'DRUM-L', sev: 'warn', src: K('Mixer drum'), c: () => one('MIXER_LOCKED_WARNING_SYMBOL'),
     title: K('Drum is locked'), sub: K('Rotation requested while locked'), what: K('Drum rotation was requested but the drum lock is on.'), effect: K('The drum will not turn.'), steps: [K('Release the drum lock at the rear station.')], link: ['mixer', K('Open Mixer')] },
-  { key: 'acgas', code: 'AC', sev: 'info', src: K('Cab'), c: () => one('AIR_CONDITIONER_GAS_LOW'),
+  { key: 'acgas', p: 'ac', code: 'AC', sev: 'info', src: K('Cab'), c: () => one('AIR_CONDITIONER_GAS_LOW'),
     title: K('Air conditioning gas low'), sub: K('Service the air conditioning'), what: K('The AC pressure switch reports low refrigerant.'), effect: K('Cab cooling is reduced.'), steps: [K('Have the air conditioning serviced.')] },
   { key: 'dpf6', code: 'DPF-L6', sev: 'alarm', src: K('Engine aftertreatment'), c: () => S.m.soot >= 80,
     title: K('Exhaust filter overloaded'), sub: () => tx('Soot {0} · level {1}', pct(f0(S.m.soot)), 6),
@@ -438,7 +441,7 @@ function dtcAlertDefs() {
   if (!fresh(0x2800)) return [];
   const act = one('ACTIVE_FAULT');
   return dtcList().map((d) => ({
-    key: 'dtc-' + d.spn + '-' + d.fmi, code: 'SPN ' + d.spn + ' / FMI ' + (d.fmi == null ? '?' : d.fmi), sev: act ? 'warn' : 'info', src: K('Engine fault code'),
+    key: 'dtc-' + d.spn + '-' + d.fmi, p: 'engine', code: 'SPN ' + d.spn + ' / FMI ' + (d.fmi == null ? '?' : d.fmi), sev: act ? 'warn' : 'info', src: K('Engine fault code'),
     title: () => spnName(d.spn), sub: () => fmiName(d.fmi),
     what: () => tx('Engine controller reports SPN {0}, FMI {1}: {2}.', d.spn, d.fmi == null ? '?' : d.fmi, fmiName(d.fmi)),
     effect: () => tx(act ? 'Active fault lamp is on.' : 'Stored fault. The passive fault lamp is on.'),
@@ -448,9 +451,9 @@ function dtcAlertDefs() {
 }
 function seedHistory() {
   const h = [
-    { code: 'WIF', sev: 'warn', src: K('Fuel system'), title: K('Water in fuel'), what: K('The fuel filter sensor detected water.'), effect: K('None now that it has cleared.'), steps: [K('Drain the water separator at the next stop.')], ago: 170, len: 6 },
+    { code: 'WIF', p: 'water-fuel', sev: 'warn', src: K('Fuel system'), title: K('Water in fuel'), what: K('The fuel filter sensor detected water.'), effect: K('None now that it has cleared.'), steps: [K('Drain the water separator at the next stop.')], ago: 170, len: 6 },
     { code: 'TR-F', sev: 'warn', src: K('Transmission'), title: K('Transmission filter clogged'), what: K('The transmission filter restriction switch is on.'), effect: K('None now that it has cleared.'), steps: [K('Replace the transmission filter at the next service.')], ago: 260, len: 22 },
-    { code: 'BATT', sev: 'warn', src: K('Electrical'), title: K('Battery not charging'), what: K('The alternator is not charging the batteries.'), effect: K('None now that it has cleared.'), steps: [K('Check the alternator belt.')], ago: 330, len: 2 },
+    { code: 'BATT', p: 'battery', sev: 'warn', src: K('Electrical'), title: K('Battery not charging'), what: K('The alternator is not charging the batteries.'), effect: K('None now that it has cleared.'), steps: [K('Check the alternator belt.')], ago: 330, len: 2 },
   ];
   h.forEach((d) => { const t0 = now() - d.ago * 60e3; S.alerts.push({ id: ++S.seq, key: 'seed' + d.code, def: { ...d, sub: d.title }, sev: d.sev, active: false, acked: true, t0, t1: t0 + d.len * 60e3 }); });
 }
@@ -518,9 +521,9 @@ function dischargeChecks() {
 const startHint = () => {
   if (!fresh(0x10)) return null;
   if (one('GEAR_NEUTRAL_NEEDED_WARNING')) return ['warn', tx('Shift to neutral to start')];
-  if (fresh(0x1300) && one('ENGINE_CRANKKING')) return ['info', tx('Cranking…')];
-  if (one('PREHEAT_LAMP')) return ['info', tx('Preheating · wait')];
-  if (fresh(0x1300) && one('ENGINE_DELAY_ACTIVE')) return ['info', tx('Cool-down before shutdown')];
+  if (fresh(0x1300) && one('ENGINE_CRANKKING')) return ['info', tx('Cranking…'), 'key'];
+  if (one('PREHEAT_LAMP')) return ['info', tx('Preheating · wait'), 'preheat'];
+  if (fresh(0x1300) && one('ENGINE_DELAY_ACTIVE')) return ['info', tx('Cool-down before shutdown'), 'engine-shutoff'];
   return null;
 };
 
@@ -745,11 +748,11 @@ const noDataBanner = () => (ecuOk() ? '' : `<div class="nodata">${I.plug}<b>${tx
 
 /* ---------- Drive ---------- */
 const GAUGES = [
-  { k: 'fuel', label: K('Fuel'), unit: '%', min: 0, max: 100, get: G.fuel, low: true, warn: 12, alarm: 5, bit: 'FUEL_LOW', bitSev: 'warn' },
-  { k: 'coolant', label: K('Engine coolant'), unit: '°C', min: 20, max: 120, get: G.coolant, warn: 100, alarm: 105, bit: 'ENGINE_COOLANT_FAULT', bitSev: 'alarm' },
-  { k: 'oilp', label: K('Engine oil pressure'), unit: 'bar', min: 0, max: 7, get: G.oilBar, low: true, warn: 1.8, alarm: 1.6, bit: 'ENGINE_OIL_PRESSURE_WARNING', bitSev: 'alarm', d: 1, onlyRunning: true },
-  { k: 'transT', label: K('Transmission oil'), unit: '°C', min: 0, max: 130, get: G.transT, warn: 100, alarm: 110, bit: 'TRANSMISSION_TEMP_FAULT', bitSev: 'alarm' },
-  { k: 'transP', label: K('Transmission pressure'), unit: 'bar', min: 0, max: 30, get: G.transP, low: true, warn: 12, alarm: 10, bit: 'TRANSMISSION_OIL_PRESSURE_LOW', bitSev: 'alarm', onlyRunning: true },
+  { k: 'fuel', p: 'fuel', label: K('Fuel'), unit: '%', min: 0, max: 100, get: G.fuel, low: true, warn: 12, alarm: 5, bit: 'FUEL_LOW', bitSev: 'warn' },
+  { k: 'coolant', p: 'coolant', label: K('Engine coolant'), unit: '°C', min: 20, max: 120, get: G.coolant, warn: 100, alarm: 105, bit: 'ENGINE_COOLANT_FAULT', bitSev: 'alarm' },
+  { k: 'oilp', p: 'oil-pressure', label: K('Engine oil pressure'), unit: 'bar', min: 0, max: 7, get: G.oilBar, low: true, warn: 1.8, alarm: 1.6, bit: 'ENGINE_OIL_PRESSURE_WARNING', bitSev: 'alarm', d: 1, onlyRunning: true },
+  { k: 'transT', p: 'trans-temp', label: K('Transmission oil'), unit: '°C', min: 0, max: 130, get: G.transT, warn: 100, alarm: 110, bit: 'TRANSMISSION_TEMP_FAULT', bitSev: 'alarm' },
+  { k: 'transP', p: 'trans-pressure', label: K('Transmission pressure'), unit: 'bar', min: 0, max: 30, get: G.transP, low: true, warn: 12, alarm: 10, bit: 'TRANSMISSION_OIL_PRESSURE_LOW', bitSev: 'alarm', onlyRunning: true },
   { k: 'hyd', label: K('Hydraulic oil'), unit: '°C', min: 0, max: 110, get: G.hyd, warn: 85, alarm: 90, bit: 'HYDRAULIC_OIL_TEMP_HIGH', bitSev: 'alarm' },
 ];
 const gPct = (g, v) => clamp((v - g.min) / (g.max - g.min) * 100, 0, 100);
@@ -765,11 +768,17 @@ function brakeCells() {
     const st = brakeState(b); const accS = one(b.accS); const svcS = one(b.svcS);
     const val = (sg, bad) => (bad ? `<span class="sensbad">${tx('Sensor fault')}</span>` : `<b class="num" data-live="g2:${sg}"></b> <small>bar</small>`);
     const pill = st === 'alarm' ? `<span class="pill alarm">${tx('Accumulator fault')}</span>` : st === 'sensor' ? `<span class="pill warn">${tx('Sensor fault')}</span>` : st === 'nodata' ? `<span class="pill off">${NA}</span>` : `<span class="pill ok">${tx('OK')}</span>`;
-    return `<div class="bcell ${st}"><div class="card-h"><span style="font-size:16px;font-weight:600">${tx(b.l)}</span>${pill}</div>
+    return `<div class="bcell ${st}"><div class="card-h"><span class="bhead">${pic(b.k === 'p' ? 'park-brake' : 'brake')}${tx(b.l)}</span>${pill}</div>
       <div class="brow"><span>${tx('Accumulator')}</span><span>${val(b.acc, accS)}</span></div>
       <div class="track" style="height:8px"><div class="fill" data-w="b:${b.acc}" style="${accS ? 'display:none' : ''}${st === 'alarm' ? ';background:var(--redTxt)' : ''}"></div><div class="tick" style="left:65%"></div></div>
       <div class="brow"><span>${tx(b.k === 'p' ? 'Release pressure' : 'Applied')}</span><span>${val(b.svc, svcS)}</span></div></div>`;
   }).join('');
+}
+function drumLine() {
+  if (!fresh(0x10)) return '';
+  const d = drumDir(); const lk = one('MIXER_LOCKED_SYMBOL'); const rear = one('MIXER_CONTROL_AT_REAR_SIDE');
+  const dirTxt = d === 1 ? tx('Turning right') : d === -1 ? tx('Turning left') : tx('Stopped');
+  return `<button class="drumline" data-act="nav" data-arg="mixer">${I.mixer}<b>${tx('Drum')}</b><span class="${d ? 'accc' : ''}">${esc(dirTxt)}</span>${lk ? `<span class="warnc">${pic('lock')}${tx('Locked')}</span>` : ''}<span class="mut">${tx('Control')}: ${tx(rear ? 'Rear station' : 'Cab')}</span><span class="mut" style="margin-left:auto">${tx('Coil')} <b class="num" data-live="drumCoil"></b> mA</span></button>`;
 }
 function scrDrive() {
   const gs = gearState();
@@ -777,19 +786,21 @@ function scrDrive() {
   const band = dpfBand(); const dpfWarn = band !== 'L3'; const hint = startHint();
   const blockMsg = S.m.block === 'park' && ecuOk() ? tx('Parking brake on') : S.m.block === 'regen' ? tx('Regenerating') : null;
   const inds = activeInds(); const shown = inds.slice(0, 3); const more = inds.length - shown.length;
-  const gaugeRows = GAUGES.map((g) => `<div class="gauge st-${gState(g)}"><span class="gl">${esc(tx(g.label))}</span><div class="track"><div class="fill" data-w="g:${g.k}"></div><div class="tick" style="left:${gPct(g, g.warn)}%"></div></div><span class="gv num">${liveVal('g:' + g.k, g.unit)}</span></div>`).join('');
+  const tt = (p, on, sev, label) => `<span class="tt ${on ? 'on-' + sev : ''}" title="${esc(tx(label))}" role="img" aria-label="${esc(tx(label))}${on ? '' : ' · ' + esc(tx('Off|light'))}">${pic(p)}</span>`;
+  const gaugeRows = GAUGES.map((g) => `<div class="gauge st-${gState(g)}"><span class="gl">${g.p ? pic(g.p) : '<i class="pic none" aria-hidden="true"></i>'}${esc(tx(g.label))}</span><div class="track"><div class="fill" data-w="g:${g.k}"></div><div class="tick" style="left:${gPct(g, g.warn)}%"></div></div><span class="gv num">${liveVal('g:' + g.k, g.unit)}</span></div>`).join('');
   const lock = one('LOCK_UP_ACTIVE_SYMBOL'); const ret = one('RETARDER_ACTIVE');
-  const pill = hint ? `<span class="pill ${hint[0] === 'warn' ? 'warn' : 'acc'}" style="height:34px;font-size:15px;margin-left:auto">${esc(hint[1])}</span>` : blockMsg ? `<span class="pill warn" style="height:34px;font-size:15px;margin-left:auto">${esc(blockMsg)}</span>` : '';
+  const pill = hint ? `<span class="pill ${hint[0] === 'warn' ? 'warn' : 'acc'} pillpic" style="height:34px;font-size:15px;margin-left:auto">${hint[2] ? pic(hint[2]) : ''}${esc(hint[1])}</span>` : blockMsg ? `<span class="pill warn" style="height:34px;font-size:15px;margin-left:auto">${esc(blockMsg)}</span>` : '';
   return `<main class="main"><div class="col" style="flex:1;gap:12px">
     ${noDataBanner()}
     <div style="flex:1;min-height:0;display:flex;gap:18px">
       <section class="col" style="width:490px;flex:none;gap:12px" aria-label="${esc(tx('Speed and drivetrain'))}">
         <div class="card" style="flex:1;padding:14px 22px;display:flex;flex-direction:column;justify-content:space-between">
-          <div class="sigrow"><span class="sig" data-sig="L" aria-hidden="true">${I.arrowL}</span><span class="sig" data-sig="R" aria-hidden="true">${I.arrowR}</span>${pill}</div>
+          <div class="sigrow"><span class="sig" data-sig="L" aria-hidden="true">${pic('signal')}</span><span class="sig" data-sig="R" aria-hidden="true">${pic('signal', 'flip')}</span>${tt('park-brake', one('PARKING_BRAKE_ACTIVE'), 'alarm', K('Parking brake on'))}${tt('seat-belt', one('SEAT_BELT'), 'warn', K('Seat belt not fastened'))}${tt('headlight', one('HEADLIGHT'), 'info', K('Headlights'))}${tt('hazard', one('FLASHER'), 'warn', K('Hazard lights'))}${pill}</div>
           <div style="display:flex;align-items:flex-end;gap:14px"><span class="num" style="font-size:150px;line-height:.82;letter-spacing:-.02em" data-live="speed">0</span><span class="mut" style="font-size:26px;font-weight:500;padding-bottom:6px">${tu('km/h')}</span>
             <span style="margin-left:auto;text-align:right;padding-bottom:4px"><span class="mut" style="font-size:14px;display:block">${tx('Gas pedal')}</span><span class="num" style="font-size:26px">${liveVal('pedal', '%', 'font:500 14px Barlow;color:var(--mut)')}</span></span></div>
           <div style="display:flex;align-items:center;gap:10px">${dirs}<div style="margin-left:12px;display:flex;flex-direction:column;gap:5px"><span class="num" style="font-size:36px;line-height:1" data-live="gear"></span>
-            <span style="display:flex;gap:6px"><span class="pill ${lock ? 'acc' : 'off'}" style="height:26px;font-size:13px">${tx('LOCK-UP')}</span><span class="pill ${ret ? 'acc' : 'off'}" style="height:26px;font-size:13px">${tx('RETARDER')}</span></span></div></div>
+            <span style="display:flex;gap:6px"><span class="pill pillpic ${lock ? 'acc' : 'off'}" style="height:28px;font-size:13px">${pic('lockup')}${tx('LOCK-UP')}</span><span class="pill pillpic ${ret ? 'acc' : 'off'}" style="height:28px;font-size:13px">${pic('retarder')}${tx('RETARDER')}</span></span></div></div>
+          ${drumLine()}
         </div>
         <div class="card" style="padding:10px 22px 12px"><div class="card-h" style="margin-bottom:6px"><span class="mut" style="font-size:16px;font-weight:500">${tx('Engine speed')}</span><span class="num" style="font-size:26px"><span data-live="rpm"></span> <small class="mut" style="font:500 16px Barlow,sans-serif">${tu('rpm')}</small></span></div>
           <div class="track" style="height:14px;border-radius:4px;overflow:hidden"><div style="position:absolute;left:84.6%;top:0;bottom:0;width:7.7%;background:var(--amberSoft)"></div><div style="position:absolute;left:92.3%;top:0;bottom:0;right:0;background:var(--redSoft)"></div><div class="fill" data-w="rpm" style="border-radius:0"></div></div></div>
@@ -808,16 +819,16 @@ function scrDrive() {
     </div>
     <section style="height:62px;flex:none;display:flex;align-items:center;gap:10px;background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:0 12px" aria-label="${esc(tx('Active now'))}">
       <span class="kicker" style="width:92px;flex:none;line-height:1.2">${tx('Active now')}</span>
-      <div class="indrow">${shown.map((i) => { const lab = i.k === 'dpf' && S.regen.running ? tx('Regenerating') : tx(i.l); return `<button class="ind ${i.st}" data-act="indGo" data-arg="${i.k}" title="${esc(lab)}">${esc(lab)}</button>`; }).join('')}
+      <div class="indrow">${shown.map((i) => { const lab = i.k === 'dpf' && S.regen.running ? tx('Regenerating') : tx(i.l); return `<button class="ind ${i.st}" data-act="indGo" data-arg="${i.k}" title="${esc(lab)}">${i.p ? pic(i.p) : ''}${esc(lab)}</button>`; }).join('')}
       ${more > 0 ? `<button class="ind go" style="flex:none" data-act="indAll">${tx('+{0} more', more)}</button>` : ''}</div>
       <button class="ind go" style="flex:none" data-act="indAll">${tx('All indicators')}</button></section>
     <section style="height:40px;flex:none;display:flex;align-items:center;gap:22px;padding:0 6px;font-size:16px;color:var(--mut);white-space:nowrap" aria-label="${esc(tx('Trip data'))}">
       <span>${tx('Odometer')} <b class="num" style="font-size:22px;color:var(--txt)" data-live="odo"></b> km</span>
       <span>${tx('Trip')} <b class="num" style="font-size:22px;color:var(--txt)" data-live="trip"></b> km</span>
       <button class="btn sm hold" data-hold="resetTrip" aria-label="${esc(tx('Hold for 2 seconds to reset trip'))}"><span class="prog"></span><span style="position:relative">${tx('Hold to reset trip')}</span></button>
-      <span>${tx('Engine')} <b class="num" style="font-size:22px;color:var(--txt)" data-live="hours"></b> ${tu('h')}</span>
-      <span>${tx('Battery')} <b class="num" style="font-size:22px;color:var(--txt)" data-live="battery"></b> V</span>
-      <span>${tx('Boost')} <b class="num" style="font-size:22px;color:var(--txt)" data-live="boost"></b> bar</span></section>
+      <span class="iconval" title="${esc(tx('Engine hours'))}">${pic('hours')}<b class="num" style="font-size:22px;color:var(--txt)" data-live="hours"></b> ${tu('h')}</span>
+      <span class="iconval" title="${esc(tx('Battery'))}">${pic('battery')}<b class="num" style="font-size:22px;color:var(--txt)" data-live="battery"></b> V</span>
+      <span class="iconval" title="${esc(tx('Boost pressure'))}">${pic('turbo')}<b class="num" style="font-size:22px;color:var(--txt)" data-live="boost"></b> bar</span></section>
   </div></main>`;
 }
 
@@ -873,7 +884,7 @@ function scrAlerts() {
   const act = activeAlerts(); const hist = historyAlerts(); const isAct = S.alertTab === 'active'; const list = isAct ? act : hist;
   let sel = byId(S.alertSel); if (!sel || !list.includes(sel)) sel = list[0] || null; if (sel) S.alertSel = sel.id;
   const rows = list.map((a) => { const d = a.def; const sub = isAct ? `${tf(d.sub)} · ${ago(a.t0)}` : tx('Cleared {0} · lasted {1}', hhmm(a.t1), dur(a.t1 - a.t0));
-    return `<button class="arow ${sel && sel.id === a.id ? 'sel' : ''}" data-act="aSel" data-arg="${a.id}"><span class="sev ${a.sev}">${a.sev === 'info' ? 'i' : '!'}</span><span style="flex:1;min-width:0"><span class="t">${esc(tf(d.title))}</span><span class="s">${esc(sub)}</span></span>${isAct ? (a.acked ? `<span class="pill off">${tx('Seen')}</span>` : `<span class="pill on">${tx('New')}</span>`) : `<span class="pill off">${tx('Cleared')}</span>`}</button>`; }).join('');
+    return `<button class="arow ${sel && sel.id === a.id ? 'sel' : ''}" data-act="aSel" data-arg="${a.id}"><span class="sev ${a.sev}">${a.sev === 'info' ? 'i' : '!'}</span>${d.p ? `<span class="rowpic">${pic(d.p)}</span>` : ''}<span style="flex:1;min-width:0"><span class="t">${esc(tf(d.title))}</span><span class="s">${esc(sub)}</span></span>${isAct ? (a.acked ? `<span class="pill off">${tx('Seen')}</span>` : `<span class="pill on">${tx('New')}</span>`) : `<span class="pill off">${tx('Cleared')}</span>`}</button>`; }).join('');
   let detail;
   if (!sel) detail = `<section class="card" style="flex:1;min-width:0;padding:20px 24px;display:flex"><div class="empty"><span style="width:56px;height:56px;color:var(--ok)">${I.okc}</span>${tx(isAct ? 'No active alerts. The machine is OK.' : 'History is empty.')}</div></section>`;
   else {
@@ -882,7 +893,7 @@ function scrAlerts() {
     const when = sel.active ? tx('Started {0} · {1}', ago(sel.t0), hhmm(sel.t0)) : `${hhmm(sel.t0)}–${hhmm(sel.t1)}`;
     detail = `<section class="card" style="flex:1;min-width:0;padding:20px 24px;display:flex;flex-direction:column;gap:14px;border-color:${bc}" aria-label="${esc(tx('Alert detail'))}">
       <div class="card-h" style="align-items:center"><span class="pill ${sel.sev === 'info' ? 'off' : sel.sev}" style="height:34px;font-size:16px">${tx(SEVNAME[sel.sev])}</span><span class="mono mut" style="font-size:14px;flex:1;margin-left:12px">${esc(tx('Code {0} · {1}', d.code, tx(d.src)))}</span><span class="mut" style="font-size:15px">${esc(when)}</span></div>
-      <h2 style="margin:0;font-size:30px;line-height:1.15;font-weight:600">${esc(tf(d.title))}</h2>
+      <h2 class="titlepic" style="margin:0;font-size:30px;line-height:1.15;font-weight:600">${d.p ? pic(d.p, 'lg') : ''}${esc(tf(d.title))}</h2>
       <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px"><div style="background:var(--panel2);border-radius:12px;padding:12px 16px"><div class="kicker" style="margin-bottom:6px">${tx('What is happening')}</div><div style="font-size:17px;line-height:1.4">${esc(tf(d.what))}</div></div><div style="background:var(--panel2);border-radius:12px;padding:12px 16px"><div class="kicker" style="margin-bottom:6px">${tx('Effect on the machine')}</div><div style="font-size:17px;line-height:1.4">${esc(tf(d.effect))}</div></div></div>
       <div><div class="kicker" style="margin-bottom:6px">${tx('What to do')}</div><ol style="margin:0;padding-left:26px;font-size:18px;line-height:1.5">${d.steps.map((s) => `<li>${esc(tf(s))}</li>`).join('')}</ol></div>
       ${trend}<div style="flex:1"></div>
@@ -910,7 +921,7 @@ function scrMixer() {
       <div class="card-h" style="position:absolute;left:20px;top:16px;right:20px"><span class="mut" style="font-size:16px;font-weight:500">${tx('Mixer drum · side view')}</span><span class="pill ${mOk ? 'ok' : 'warn'}">${tx(mOk ? 'Rear station online' : 'Rear station offline')}</span></div>
       <div class="truck">
         <div class="cab ${front ? 'ctl' : ''}"><span>${tx('Cab')}</span>${front ? `<b>${tx('In control')}</b>` : ''}</div>
-        <div class="drum ${d === 1 ? 'spinR' : d === -1 ? 'spinL' : ''} ${lockSym ? 'locked' : ''}"><div class="stripes"></div>${lockSym ? `<span class="lockbadge">${I.lock}${tx('Locked')}</span>` : ''}</div>
+        <div class="drum ${d === 1 ? 'spinR' : d === -1 ? 'spinL' : ''} ${lockSym ? 'locked' : ''}"><div class="stripes"></div>${lockSym ? `<span class="lockbadge">${pic('lock')}${tx('Locked')}</span>` : ''}</div>
         <div class="rearst ${rear ? 'ctl' : ''} ${mOk ? '' : 'off'}"><span>${tx('Rear station')}</span>${rear ? `<b>${tx('In control')}</b>` : ''}</div>
         <div class="chassis"></div><span class="wheel" style="left:44px"></span><span class="wheel" style="left:262px"></span><span class="wheel" style="left:326px"></span>
       </div>
@@ -937,16 +948,16 @@ function scrMixer() {
 
 /* ---------- Diagnostics ---------- */
 const numU = (key, unit, size) => `<b class="num" style="font-size:${size || 24}px">${liveVal(key, unit, 'font:500 15px Barlow;color:var(--mut)')}</b>`;
-const onOff = (n, l, k) => { const v = B(n); return `<div><span>${tx(l)}</span><span class="pill ${v == null ? 'off' : v ? (k || 'on') : 'off'}">${v == null ? NA : tx(v ? 'On|output' : 'Off|output')}</span></div>`; };
+const onOff = (n, l, k, pp) => { const v = B(n); return `<div><span class="kvl">${pic(pp)}${tx(l)}</span><span class="pill ${v == null ? 'off' : v ? (k || 'on') : 'off'}">${v == null ? NA : tx(v ? 'On|output' : 'Off|output')}</span></div>`; };
 function scrEngine() {
   const tabs = [['engine', K('Engine')], ['valves', K('Valves')], ['can', K('CAN bus')], ['brake', K('Brake test')]];
   let body = '';
   if (S.diag === 'engine') {
-    const kv = [[K('Engine speed'), 'rpm', 'rpm'], [K('Coolant temperature'), 'g:coolant', '°C'], [K('Oil pressure'), 'oilKpa', 'kPa'], [K('Fuel pressure'), 'fuelP', 'kPa'], [K('Boost pressure'), 'boost', 'bar'], [K('Boost temperature'), 'boostT', '°C'], [K('Battery'), 'battery', 'V'], [K('Gas pedal'), 'pedal', '%'], [K('Engine hours'), 'hours', 'h']];
+    const kv = [[K('Engine speed'), 'rpm', 'rpm', ''], [K('Coolant temperature'), 'g:coolant', '°C', 'coolant'], [K('Oil pressure'), 'oilKpa', 'kPa', 'oil-pressure'], [K('Fuel pressure'), 'fuelP', 'kPa', 'fuel-pressure'], [K('Boost pressure'), 'boost', 'bar', 'turbo'], [K('Boost temperature'), 'boostT', '°C', 'turbo'], [K('Battery'), 'battery', 'V', 'battery'], [K('Gas pedal'), 'pedal', '%', ''], [K('Engine hours'), 'hours', 'h', 'hours']];
     const dtcs = dtcList(); const act = one('ACTIVE_FAULT'); const pas = one('PASSIVE_FAULT');
     body = `<div style="display:flex;gap:20px;flex:1;min-height:0">
       <section class="card pad" style="flex:1.3;display:flex;flex-direction:column;gap:10px"><div class="card-h"><h2>${tx('Diesel engine')}</h2><span class="pill ${one('ENGINE_STATUS') ? 'ok' : 'off'}">${tx(one('ENGINE_STATUS') ? 'Running' : 'Stopped')}</span></div>
-        <div class="kv">${kv.map(([l, k, u]) => `<div><span>${tx(l)}</span>${numU(k, u)}</div>`).join('')}${onOff('IGNITION', K('Ignition'))}${onOff('PREHEAT_LAMP', K('Preheating'), 'acc')}${onOff('ENGINE_CRANKKING', K('Cranking'), 'acc')}${onOff('ENGINE_DELAY_ACTIVE', K('Engine cool-down'), 'acc')}${onOff('ENGINE_WARNING', K('Engine warning'), 'warn')}</div></section>
+        <div class="kv">${kv.map(([l, k, u, pp]) => `<div><span class="kvl">${pic(pp)}${tx(l)}</span>${numU(k, u)}</div>`).join('')}${onOff('IGNITION', K('Ignition'))}${onOff('PREHEAT_LAMP', K('Preheating'), 'acc', 'preheat')}${onOff('ENGINE_CRANKKING', K('Cranking'), 'acc', 'key')}${onOff('ENGINE_DELAY_ACTIVE', K('Engine cool-down'), 'acc', 'engine-shutoff')}${onOff('ENGINE_WARNING', K('Engine warning'), 'warn', 'engine')}</div></section>
       <section class="card pad" style="flex:1;display:flex;flex-direction:column;gap:10px"><div class="card-h"><h2>${tx('Engine fault codes')}</h2><span class="mut" style="font-size:14px">J1939 SPN / FMI</span></div>
         <div style="display:flex;gap:8px"><span class="pill ${act ? 'warn' : 'off'}">${tx('Active fault lamp')}</span><span class="pill ${pas ? 'acc' : 'off'}">${tx('Passive fault lamp')}</span></div>
         <div style="flex:1;display:flex;flex-direction:column;gap:8px;overflow:auto">${dtcs.length ? dtcs.map((x) => `<div class="dtc"><div class="mono" style="font-size:14px;color:var(--mut)">SPN ${x.spn} · FMI ${x.fmi == null ? '?' : x.fmi}</div><div style="font-size:18px;font-weight:600">${esc(spnName(x.spn))}</div><div class="mini">${esc(fmiName(x.fmi))}</div></div>`).join('') : `<div class="empty" style="font-size:16px">${tx('No fault codes reported.')}</div>`}</div>
@@ -960,7 +971,7 @@ function scrEngine() {
         ${rows.map((r) => `<tr><td>${tx(r.l)}<div class="mono mut" style="font-size:12px">${r.sig}</div></td><td>${tx(r.want ? 'On|output' : 'Off|output')}</td><td class="r num" style="font-size:20px"><span data-live="c:${r.sig}"></span> mA</td><td class="r">${stPill(r)}</td></tr>`).join('')}</tbody></table></section>
       <section class="card pad" style="flex:1;display:flex;flex-direction:column;gap:10px"><div class="card-h"><h2>${tx('Transmission')}</h2></div>
         <div class="kv" style="grid-template-columns:1fr"><div><span>${tx('Selected')}</span><b class="num" style="font-size:22px" data-live="gearCode"></b></div><div><span>${tx('Oil pressure')}</span>${numU('g:transP', 'bar', 22)}</div><div><span>${tx('Oil temperature')}</span>${numU('g:transT', '°C', 22)}</div>
-          ${onOff('TRANS_COIL_SHORT_CIRCUIT_WARNING', K('Coil short circuit'), 'alarm')}${onOff('TRANSMISSION_PRESS_SENSOR_FAULT', K('Pressure sensor fault'), 'warn')}${onOff('TRANSMISSION_FILTER_WARNING', K('Filter warning'), 'warn')}${onOff('LOCK_UP_ACTIVE_SYMBOL', K('Lock-up active'), 'acc')}${onOff('RETARDER_ACTIVE', K('Retarder active'), 'acc')}</div>
+          ${onOff('TRANS_COIL_SHORT_CIRCUIT_WARNING', K('Coil short circuit'), 'alarm')}${onOff('TRANSMISSION_PRESS_SENSOR_FAULT', K('Pressure sensor fault'), 'warn')}${onOff('TRANSMISSION_FILTER_WARNING', K('Filter warning'), 'warn')}${onOff('LOCK_UP_ACTIVE_SYMBOL', K('Lock-up active'), 'acc', 'lockup')}${onOff('RETARDER_ACTIVE', K('Retarder active'), 'acc', 'retarder')}</div>
         <p class="mini">${tx('A clutch that is commanded but draws no current points to a broken wire or coil.')}</p></section></div>`;
   } else if (S.diag === 'can') {
     const sel = MSG[S.canSel] || DB.messages[0]; const stale = DB.messages.filter((x) => !fresh(x.id)).length;
@@ -1109,7 +1120,7 @@ function overlays() {
   let h = ''; const md = S.modal;
   if (md) {
     let inner = '';
-    if (md.type === 'alarm') { const a = byId(md.id); if (a) inner = `<div class="dialog alarm" role="alertdialog" aria-modal="true" aria-label="${esc(tx('Alarm'))}"><div style="display:flex;align-items:center;gap:12px"><span class="sev alarm">!</span><span class="pill alarm">${tx('Alarm')}</span><span class="mono mut" style="font-size:14px">${esc(tx('Code {0} · {1}', a.def.code, tx(a.def.src)))}</span></div><h2>${esc(tf(a.def.title))}</h2><p>${esc(tf(a.def.what))}</p><div><div class="kicker" style="margin-bottom:6px">${tx('Do this first')}</div><p style="font-size:20px;color:var(--txt)">${esc(tf(a.def.steps[0]))}</p></div><div class="acts"><button class="btn" data-act="mView" data-arg="${a.id}">${tx('See all steps')}</button><button class="btn pri" data-act="mAck" data-arg="${a.id}">${tx('Acknowledge')}</button></div></div>`; }
+    if (md.type === 'alarm') { const a = byId(md.id); if (a) inner = `<div class="dialog alarm" role="alertdialog" aria-modal="true" aria-label="${esc(tx('Alarm'))}"><div style="display:flex;align-items:center;gap:12px"><span class="sev alarm">!</span><span class="pill alarm">${tx('Alarm')}</span><span class="mono mut" style="font-size:14px">${esc(tx('Code {0} · {1}', a.def.code, tx(a.def.src)))}</span></div><h2 class="titlepic">${a.def.p ? pic(a.def.p, 'lg') : ''}${esc(tf(a.def.title))}</h2><p>${esc(tf(a.def.what))}</p><div><div class="kicker" style="margin-bottom:6px">${tx('Do this first')}</div><p style="font-size:20px;color:var(--txt)">${esc(tf(a.def.steps[0]))}</p></div><div class="acts"><button class="btn" data-act="mView" data-arg="${a.id}">${tx('See all steps')}</button><button class="btn pri" data-act="mAck" data-arg="${a.id}">${tx('Acknowledge')}</button></div></div>`; }
     else if (md.type === 'login') {
       const lv = md.sel;
       inner = `<div class="dialog wide" role="dialog" aria-modal="true" aria-label="${esc(tx('Access level'))}"><div class="card-h"><h2>${tx('Access level')}</h2><button class="tbtn" data-act="close" aria-label="${esc(tx('Close'))}">${I.close}</button></div>
@@ -1120,7 +1131,7 @@ function overlays() {
         <div class="acts"><button class="btn" data-act="close">${tx('Cancel')}</button>${S.access ? `<button class="btn" data-act="logout">${tx('Log out')}</button>` : ''}<button class="btn pri" data-act="doLogin" ${lv > 0 && md.code.length < 4 ? 'disabled' : ''}>${tx(lv === 0 ? 'Use Operator level' : 'Log in')}</button></div></div>`;
     } else if (md.type === 'ind') {
       const all = INDS.map((i) => ({ ...i, st: i.s() })).sort((a, b) => (a.st ? SEVRANK[a.st] : 9) - (b.st ? SEVRANK[b.st] : 9));
-      inner = `<div class="dialog wide" role="dialog" aria-modal="true" aria-label="${esc(tx('All indicators'))}" style="max-height:740px"><div class="card-h"><h2>${tx('All indicators')}</h2><button class="tbtn" data-act="close" aria-label="${esc(tx('Close'))}">${I.close}</button></div><p>${tx('Lit lamps first. Each one has a name, so nobody has to learn a symbol table.')}</p><div class="indgrid">${all.map((i) => `<div class="indcell ${i.st ? 'on-' + i.st : 'off'}"><span class="lamp"></span>${esc(tx(i.l))}</div>`).join('')}</div><div class="acts"><button class="btn pri" data-act="close">${tx('Close')}</button></div></div>`;
+      inner = `<div class="dialog wide" role="dialog" aria-modal="true" aria-label="${esc(tx('All indicators'))}" style="max-height:740px"><div class="card-h"><h2>${tx('All indicators')}</h2><button class="tbtn" data-act="close" aria-label="${esc(tx('Close'))}">${I.close}</button></div><p>${tx('Lit lamps first. Each one has a name, so nobody has to learn a symbol table.')}</p><div class="indgrid">${all.map((i) => `<div class="indcell ${i.st ? 'on-' + i.st : 'off'}">${i.p ? pic(i.p, 'lampic') : '<span class="lamp"></span>'}${esc(tx(i.l))}</div>`).join('')}</div><div class="acts"><button class="btn pri" data-act="close">${tx('Close')}</button></div></div>`;
     } else if (md.type === 'confirm') {
       const title = tx(md.title); const text = tx(md.text, ...(md.args || []));
       inner = `<div class="dialog" role="alertdialog" aria-modal="true" aria-label="${esc(title)}"><h2>${esc(title)}</h2><p>${esc(text)}</p><div class="acts"><button class="btn" data-act="close">${tx('Cancel')}</button><button class="btn ${md.danger ? 'danger' : 'pri'}" data-act="confirmOk">${esc(tx(md.ok))}</button></div></div>`;
@@ -1184,6 +1195,7 @@ function liveText(k) {
     case 'gearCode': { const gs = gearState(); return gs ? (gs.g ? gs.dir + gs.g : gs.dir) : NA; }
     case 'rpm': return f0(G.rpm());
     case 'pedal': return f0(G.pedal());
+    case 'drumCoil': { const a = C('MIXER_RIGHT_COIL_CURRENT_MA'); const b = C('MIXER_RIGHT_COIL_CURRENT_MA_2'); return a == null ? NA : f0(Math.max(a, b || 0)); }
     case 'soot': return f0(m.soot);
     case 'odo': { const [i, d] = (Math.round(m.odo * 10) / 10).toFixed(1).split('.'); return f0(+i) + (S.lang === 'tr' ? ',' : '.') + d; }
     case 'trip': return f1(m.trip);

@@ -1171,6 +1171,7 @@ Object.assign(window.HMI_TR, {
   'Ignition': 'Kontak',
   'Stop': 'Dur',
   'Control at': 'Kumanda yeri',
+  'Control': 'Kumanda',
   'Drum lock': 'Tambur kilidi',
   'Cab and lights': 'Kabin ve ışıklar',
   'Doors': 'Kapılar',

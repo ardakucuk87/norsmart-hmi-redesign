@@ -455,3 +455,51 @@ a { color: var(--accent); }
 .truck .wheel { position: absolute; top: 172px; width: 52px; height: 52px; border-radius: 26px; background: var(--panel2); border: 6px solid var(--line3); }
 .drumtxt { position: absolute; left: 20px; right: 20px; top: 370px; text-align: center; }
 @media (prefers-reduced-motion: reduce) { .truck .drum .stripes { animation: none !important; } }
+
+/* ---------- BYM pictograms (CSS masks, coloured by state) ---------- */
+.pic { display: inline-block; flex: none; width: 1.55em; height: 1.2em; background-color: currentColor; -webkit-mask-position: center; mask-position: center; -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; vertical-align: middle; }
+.pic.flip { transform: scaleX(-1); }
+.pic.lg { width: 52px; height: 40px; }
+.pic.lampic { width: 30px; height: 24px; }
+.ind { gap: 8px; }
+.ind .pic { width: 26px; height: 22px; }
+.indrow .ind { display: inline-flex; align-items: center; }
+.indcell .pic.lampic { color: var(--line3); }
+.indcell.on-info .pic.lampic { color: var(--txt); }
+.indcell.on-warn .pic.lampic { color: var(--amber); }
+.indcell.on-alarm .pic.lampic { color: var(--redTxt); }
+.gauge .gl { display: flex; align-items: center; gap: 10px; }
+.gauge .gl .pic { width: 30px; height: 24px; color: var(--mut); }
+.gauge.st-warn .gl .pic { color: var(--amberTxt); }
+.gauge.st-alarm .gl .pic { color: var(--redTxt); }
+.bhead { display: inline-flex; align-items: center; gap: 6px; font-size: 16px; font-weight: 600; }
+.bhead .pic { width: 26px; height: 20px; color: var(--mut); }
+.bcell.alarm .bhead .pic { color: var(--redTxt); }
+.bcell.sensor .bhead .pic { color: var(--amberTxt); }
+.sig .pic { width: 26px; height: 18px; }
+.sig.on .pic { color: #0F2A12; }
+.tt { width: 44px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--line3); border: 1px solid var(--line2); }
+.tt .pic { width: 30px; height: 24px; }
+.tt.on-info { color: var(--txt); border-color: var(--line3); }
+.tt.on-warn { color: var(--amber); border-color: var(--amber); }
+.tt.on-alarm { color: var(--redTxt); border-color: var(--red); background: var(--redSoft); }
+.pillpic { gap: 6px; }
+.pillpic .pic { width: 22px; height: 18px; }
+.iconval { display: inline-flex; align-items: center; gap: 6px; }
+.iconval .pic { width: 26px; height: 22px; color: var(--mut); }
+.rowpic { flex: none; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: var(--txt2); }
+.rowpic .pic { width: 36px; height: 30px; }
+.arow .sev { width: 30px; height: 30px; font-size: 18px; }
+.titlepic { display: flex; align-items: center; gap: 14px; }
+.titlepic .pic.lg { color: var(--txt2); }
+.dialog.alarm .titlepic .pic.lg { color: var(--redTxt); }
+.kvl { display: inline-flex; align-items: center; gap: 8px; }
+.kvl .pic { width: 24px; height: 20px; color: var(--mut); }
+.lockbadge .pic { width: 16px; height: 18px; }
+.drumline { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 44px; padding: 0 12px; border-radius: 10px; background: var(--panel2); border: 1px solid var(--line); font-size: 15px; text-align: left; }
+.drumline svg { width: 22px; height: 22px; color: var(--mut); flex: none; }
+.drumline .accc { color: var(--accent); font-weight: 600; }
+.drumline .warnc { display: inline-flex; align-items: center; gap: 4px; color: var(--amberTxt); font-weight: 600; }
+.drumline .warnc .pic { width: 14px; height: 18px; }
+.drumline .num { font-size: 18px; color: var(--txt); }
+.pic.none { background: none; }
